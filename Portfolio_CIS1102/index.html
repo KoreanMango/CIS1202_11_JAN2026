@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insight Canvas</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+   
+    <header>
+        <nav>
+            <div class="logo">Insight Canvas</div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <button class="profile-button" onclick="openProfileModal()">
+                    👤 Profile
+                </button>
+               
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="blog-header">
+            <h1>Welcome to Insight Canvas</h1>
+            <p>A space for sharing ideas and experiences</p>
+        </div>
+
+        
+        <div class="blog-grid" id="blogGrid">
+            <!-- Blog posts will be inserted here -->
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Pagination buttons will be inserted here -->
+        </div>
+
+    </main>
+
+    <!-- Read Modal -->
+    <div class="modal" id="readModal" onclick="closeModal(event, 'readModal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div style="flex: 1;">
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                    <div class="modal-meta">
+                        <span class="modal-meta-item" id="modalDate"></span>
+                        <span class="modal-meta-item" id="modalAuthor"></span>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeReadModal()">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-image" id="modalImage" style="width: auto; height: auto;">
+                    <!-- PICTURE -->
+                </div>
+                <div class="modal-text" id="modalContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profileModal" onclick="closeModal(event, 'profileModal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">profile</h2>
+                <button class="modal-close" onclick="closeProfileModal()">×</button>
+            </div>
+            <div class="modal-body profile-content">
+                <div class="profile-picture"></div>
+                <div class="profile-name">GYUAN KIM</div>
+                <div class="profile-title">BSIS-1 Student</div>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">14</span>
+                        <span class="stat-label">Posts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">1.2K</span>
+                        <span class="stat-label">Views</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">156</span>
+                        <span class="stat-label">Likes</span>
+                    </div>
+                </div>
+
+                <div class="profile-bio">
+                    <h3>🙋‍♂️ Self-Introduction</h3>
+                    <p>Hello! My name is Gyuan Kim, and I am a BSIS-1 student at the University of San Carlos in Cebu. I enjoy learning and sharing new technologies. I am particularly interested in coding and web development, and I am currently studying Python, HTML/CSS/JavaScript, and Django, while building my skills through projects.</p>
+                    <p>On this blog, I aim to share programming fundamentals, web development tips, and the latest tech trends, and I hope to learn and grow together with my visitors. Beyond coding, I am also interested in emerging technologies such as AI and blockchain, and I enjoy problem-solving and creative projects.</p>
+                    <p>I look forward to sharing useful information and enjoyable learning experiences through my blog! Comments and feedback are always welcome.</p>
+                </div>
+              <br>
+                <div class="profile-education">
+                    <h3>🎓 Education</h3>
+                    <p>BSIS-1 Student, University of San Carlos, Cebu</p>
+                    <p class="small-text">Expected Graduation: 2028</p>
+                </div>
+                <br>
+                <h3 style="margin-bottom: 1rem; color: #333;">💪 Tech Stack</h3>
+                <div class="profile-skills">
+                    <span class="skill-tag">HTML/CSS</span>
+                    <span class="skill-tag">PHP</span>
+                    <span class="skill-tag">Javascript</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Git</span>
+                </div>
+
+                <div class="profile-social">
+                    <a href="https://github.com/K-mango" class="social-link" title="GitHub">🔗</a>
+                    <a href="https://web.facebook.com/profile.php?id=100024353362273" class="social-link" title="Twitter">🐦</a>
+                    <a href="mailto:25102633@gmail.com" class="social-link" title="Email">✉️</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+ <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Insight Canvas</h3>
+                <p>A space for sharing ideas and experiences</p>
+            </div>
+       <div class="footer-section">
+    <h4>Links</h4>
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="mailto:25102633@gmail.com">Contact</a></li>
+    </ul>
+</div>
+<div class="footer-section">
+    <h4>Social</h4>
+    <ul>
+        <li><a href="https://github.com/K-mango">GitHub</a></li>
+        <li><a href="https://velog.io/@jotmango">Velog</a></li>
+        <li><a href="https://web.facebook.com/profile.php?id=100024353362273">Facebook</a></li>
+    </ul>
+</div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Insight Canvas. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        let currentPage = 1;
+        const postsPerPage = 6;
+
+let blogPosts = [
+ {
+    id: 1,
+    image: "picture/Data Transformation in Retail.png",
+    title: "Transforming Data into Wisdom: A Smart Hospital's Clinical Pattern Analysis Case Study",
+    author: "GYUAN KIM",
+    date: "2025.11.23",
+    excerpt: "An exploration of how raw retail data evolves into meaningful information and actionable knowledge.",
+    content: `
+ <div class="container">
+    <div class="divider"></div>
+    <section class="intro">
+        <p>Every day, countless pieces of data flow through a smart hospital—numbers, timestamps, symptoms, treatments, and demographic details. Individually, these pieces seem insignificant. But when they are organized, analyzed, and interpreted, they evolve into powerful insights that shape healthcare decisions and improve patient outcomes.</p>
+        <p>This transformation follows the DIKW Pyramid (Data → Information → Knowledge → Wisdom). In this enhanced article, we examine how clinical records collected in a smart hospital journey through each stage and eventually become actionable wisdom.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div class="section-number">01</div>
+            <h2>Data Collection</h2>
+            <h3>Gathering the Raw Facts</h3>
+        </div>
+        <p>The foundation of the DIKW model is raw, unprocessed data. In a smart hospital environment, hundreds of patient records are generated automatically each day through electronic medical systems and IoT-based devices.</p>
+        <div class="example-block">
+            <strong>Example data entry:</strong>
+            Patient A // November 15, 2025 // Symptoms: Common cold // Prescribed medicine: X // Consultation time: 15 minutes // Residence: Seoul
+        </div>
+        <p>At this point, the data exists as isolated facts. Without structure or context, patterns remain invisible and insights cannot be derived.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div class="section-number">02</div>
+            <h2>Information</h2>
+            <h3>Structuring and Contextualizing the Data</h3>
+        </div>
+        <p>Data becomes information when it is organized, categorized, and framed in a meaningful context. Hospital systems classify patient records according to variables such as region, age, symptoms, consultation length, and treatment type.</p>
+        <p><strong>Examples of information:</strong></p>
+        <ul>
+            <li>"Last week, 200 patients from a specific region were treated for cold symptoms."</li>
+            <li>"Among these patients, 70% had consultations lasting less than 10 minutes."</li>
+        </ul>
+        <p>At this stage, the hospital begins answering essential questions—who, what, when, and where.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div class="section-number">03</div>
+            <h2>Knowledge</h2>
+            <h3>Identifying Patterns and Relationships</h3>
+        </div>
+        <p>Knowledge emerges when pieces of information are connected and analyzed to uncover trends, relationships, and underlying causes. This is where meaningful interpretation begins.</p>
+        <p><strong>Consider the following combined observations:</strong></p>
+        <ul>
+            <li>A significant temperature drop occurred last week.</li>
+            <li>Indoor mask mandates were recently lifted.</li>
+            <li>Elderly and young patients visited the hospital more frequently for cold-related symptoms.</li>
+        </ul>
+        <div class="insight-block">
+            "A sudden temperature decrease, combined with lifted mask policies, increases cold incidence among vulnerable groups."
+        </div>
+        <p>Knowledge explains the <em>why</em>—why patterns exist, and why changes occur.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <div class="section-number">04</div>
+            <h2>Wisdom</h2>
+            <h3>Turning Insights into Strategic Action</h3>
+        </div>
+        <p>The final stage of the DIKW Pyramid is wisdom—applying knowledge to make informed, beneficial decisions. At this level, insights become strategies for improving hospital operations and patient care.</p>
+        <p>Based on the derived knowledge, a smart hospital can:</p>
+        <ul>
+            <li>Launch preventive programs before seasonal temperature shifts.</li>
+            <li>Extend consultation hours for vulnerable patient groups.</li>
+            <li>Adjust staff scheduling and bed allocation on days with predicted surges.</li>
+            <li>Use AI-powered prediction models to forecast next week's patient volume.</li>
+        </ul>
+        <p>When insights evolve into proactive measures, information reaches its highest value as wisdom.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="section">
+        <h2>Data as a Strategic Compass for Future Healthcare</h2>
+        <p>Though clinical records begin as simple facts, their transformation through the DIKW model turns them into powerful tools that elevate healthcare operations and public health outcomes.</p>
+        <p><span class="highlight">The true value of data lies not in its existence, but in how it is interpreted, connected, and ultimately used to create positive change.</span></p>
+        <p>Smart hospitals of the future will increasingly rely on data-driven decision-making to achieve:</p>
+        <ul>
+            <li>Faster and more accurate diagnoses</li>
+            <li>More efficient and predictive hospital management</li>
+            <li>Safer, more patient-centered environments</li>
+        </ul>
+        <p>Data is more than information—it is the compass guiding the future of modern medicine.</p>
+    </section>
+</div>
+    `
+  },
+  {
+  id: 2,
+  image: "picture/Areas of Computer Science.png",
+  title: "The Two Pillars of Computer Science: Artificial Intelligence and Cybersecurity",
+  author: "GYUAN KIM",
+  date: "2025.11.24",
+  excerpt: "A comprehensive overview of major domains in computer science, from theoretical foundations to practical applications.",
+  content: `
+<div class="container">
+    <div class="divider"></div>
+
+    <section class="intro">
+        <p>Computer science forms the backbone of modern digital infrastructure. Among its many subfields, Artificial Intelligence (AI) and Cybersecurity serve as twin pillars: one driving innovation, the other providing protection. These two areas complement each other and continually expand their impact at the forefront of technological development.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>The Importance of Artificial Intelligence</h2>
+            <h3>AI enables computers to emulate human learning, reasoning, and problem-solving</h3>
+        </div>
+        <p>Its prominence today stems from its ability to automate processes, analyze data patterns, and perform advanced predictions, significantly enhancing productivity and efficiency.</p>
+        <p><strong>Significance:</strong> AI not only automates repetitive tasks but also supports complex decision-making, complementing or substituting human effort to achieve higher accuracy and speed.</p>
+        <p><strong>Applications:</strong></p>
+        <ul>
+            <li>Healthcare: Medical image analysis, disease prediction, accelerated drug development</li>
+            <li>Finance: High-frequency trading (HFT), fraud detection, credit risk evaluation</li>
+            <li>Personalization: Netflix recommendations, voice assistants (Siri, Bixby), tailored e-commerce suggestions</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>The Importance of Cybersecurity</h2>
+            <h3>Protecting systems, networks, and data from digital threats</h3>
+        </div>
+        <p>Cybersecurity is essential for safeguarding the vast value generated by AI systems and the data they process.</p>
+        <p><strong>Significance:</strong> In the era of digital transformation, data is the most valuable asset. Breaches or cyberattacks can severely damage trust, finances, and operations, making security a key foundation for the stability and sustainability of digital environments.</p>
+        <p><strong>Applications:</strong></p>
+        <ul>
+            <li>Network Security: Firewalls and intrusion detection systems (IDS) to block external threats</li>
+            <li>Information Security: Encryption and access controls to protect sensitive data</li>
+            <li>Digital Forensics: Collecting and analyzing evidence to trace attackers after incidents</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>A Complementary Relationship</h2>
+            <h3>How AI and cybersecurity reinforce each other</h3>
+        </div>
+        <p>AI and cybersecurity strengthen each other through a mutually reinforcing relationship.</p>
+        <ul>
+            <li>AI enhances security systems by detecting anomalies, learning patterns, and building more intelligent defenses.</li>
+            <li>Cybersecurity protects AI models and ensures the accuracy and integrity of the data AI relies upon.</li>
+        </ul>
+        <p>In short, AI makes security smarter, and security makes AI safer. While these fields may appear independent, they are deeply intertwined, forming a critical axis for future technological progress.</p>
+    </section>
+</div>
+  `
+},
+
+ {
+  id: 3,
+  image: "picture/Networks, Data, and Information Systems.png",
+  title: "The Role of Computer Systems in the Healthcare Industry",
+  author: "GYUAN KIM",
+  date: "2025.11.25",
+  excerpt: "An introduction to how computer systems enhance communication, efficiency, and data-driven healthcare solutions.",
+  content: `
+   <div class="divider"></div>
+ <div class="container">
+    <section class="intro">
+        <p>The healthcare industry is directly linked to human life, making the accuracy and reliability of computer systems critically important. These systems go beyond simple record-keeping, driving transformative changes in patient diagnosis, treatment, and hospital operational efficiency. Modern healthcare relies on integrated computer systems to deliver timely care, reduce medical errors, and improve patient outcomes through data-driven decision-making.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Electronic Medical Records (EMR) and Computerized Physician Order Entry (OCS)</h2>
+            <h3>Core digital systems for patient information management</h3>
+        </div>
+        <p><strong>EMR (Electronic Medical Record)</strong> is a core system that digitizes and manages all patient information within a hospital. It serves as the central repository for patient histories, laboratory results, imaging reports, and medication records. By replacing paper-based systems, EMR dramatically reduces the risk of lost or illegible documents and enables instant access to critical patient information across departments.</p>
+        <ul>
+             <li><strong>Role:</strong> It consolidates patient records, test results, and medication histories, reducing errors associated with paper documents and accelerating information sharing among medical staff. EMR systems also support clinical decision-making by flagging potential drug allergies, contraindications, and abnormal test results.</li>
+        </ul>
+        <p><strong>OCS (Computerized Physician Order Entry)</strong> allows doctors to enter prescriptions directly into a computer system, eliminating handwritten orders that can be misread or misinterpreted.</p>
+        <ul>
+     <li><strong>Role:</strong> It prevents errors such as misreading or incorrect dosages from handwritten prescriptions and maximizes patient safety through drug interaction alerts. OCS systems can also suggest evidence-based treatment protocols and automatically check for duplicate orders, ensuring efficient and safe medication management.</li>
+        </ul>
+
+        <div class="section-header">
+            <h2>Picture Archiving and Communication System (PACS)</h2>
+            <h3>Efficient medical imaging storage and sharing</h3>
+        </div>
+        <p><strong>PACS</strong> is a specialized system for storing, transmitting, and accessing large medical imaging data, such as MRI, CT, and X-ray scans. Before PACS, medical images were stored on physical film, which was costly, space-consuming, and difficult to share with other healthcare providers.</p>
+                
+            <ul>
+            <li><strong>Role:</strong> It enables immediate digital interpretation of medical images, reducing diagnostic time and eliminating the need for physical film storage.</li>
+            <li>It allows rapid sharing with other hospitals or specialists for collaborative consultations, supporting telemedicine and remote diagnostic services.</li>
+            <li>Efficient compression and management of imaging data also optimize storage space utilization while maintaining image quality for accurate diagnosis.</li>
+        </ul>
+
+        <div class="section-header">
+            <h2>AI-Based Diagnosis and Analysis</h2>
+            <h3>AI integration into healthcare decision-making</h3>
+        </div>
+        <p>Recently, AI systems have become deeply integrated into diagnosis and treatment planning. Machine learning algorithms can analyze vast medical datasets to identify patterns that would be impossible for humans to detect manually.</p>
+        <ul>
+            <li><strong>Role:</strong> AI learns from large-scale medical datasets to detect subtle patterns or abnormalities that may be overlooked by the human eye, enhancing early disease detection.</li>
+            <li><strong>Examples:</strong> Skin cancer detection through image analysis, retinal disease identification, determining optimal radiation doses for cancer treatment, and predicting patient deterioration before symptoms appear.</li>
+            <li>AI supports physicians' decisions, reduces misdiagnosis rates, and plays a critical role in enhancing treatment quality by providing evidence-based recommendations and risk assessments.</li>
+        </ul>
+
+        <div class="section-header">
+            <h2>Key Roles of Computer Systems in Healthcare</h2>
+            <h3>Three essential functions for modern hospitals</h3>
+        </div>
+        <p>In the healthcare industry, computer systems perform three essential roles:</p>
+        <ol>
+            <li>Secure management of patient data with encryption and access controls</li>
+            <li>Streamlining clinical workflows through automation and integration</li>
+            <li>Improving diagnostic accuracy through advanced technologies like AI and data analytics</li>
+        </ol>
+        <p>Through these functions, they provide better patient care experiences and have become indispensable in modern healthcare systems. The continued evolution of healthcare information technology promises even greater improvements in patient safety, treatment outcomes, and operational efficiency.</p>
+    </section>
+</div>
+  `
+},
+{
+  id: 4,
+  image:"picture/Flowchart and Pseudocode.png",
+  title: "Vending Machine Transaction Simulation: Flowchart and Pseudocode",
+  author: "GYUAN KIM",
+  date: "2025.11.23",
+  excerpt: "A discussion on the essential digital skills needed to navigate technology-driven environments.",
+  content: `
+   <div class="divider"></div>
+ <div class="container">
+    <section class="intro">
+        <p>A vending machine is a simple yet powerful example of automation that illustrates fundamental programming concepts used in computer science. By examining how a vending machine operates, we gain insight into algorithm design, conditional logic, and user interaction—core elements of many software systems. Even though vending machines seem straightforward, they demonstrate essential principles of sequential execution, decision-making, and error handling that apply to complex software applications.</p>
+        <p>Understanding how to model real-world processes like vending machine transactions helps students and developers grasp the fundamentals of computational thinking. This exercise bridges the gap between abstract programming concepts and tangible, everyday experiences.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Pseudocode Representation</h2>
+            <h3>Simplified vending machine logic</h3>
+        </div>
+        <p>Below is a simplified pseudocode of a typical vending machine transaction. Pseudocode serves as an intermediate representation between human language and actual programming code, making it easier to design and communicate algorithms without worrying about specific syntax rules.</p>
+
+<div class="code-block">
+<pre><code>START
+Display "Select item and insert payment"
+User selects item
+Input payment
+IF payment >= item price THEN
+    Dispense item
+    Calculate and return change
+    Display "Thank you!"
+ELSE
+    Display "Insufficient funds. Please add more."
+END IF
+STOP</code></pre>
+</div>
+
+        <p>The corresponding flowchart visually represents these steps: <strong>start → item selection → payment input → condition check → dispense item or display error → end</strong>. This visualization makes the logical sequence easy to follow and helps programmers detect potential issues before implementing the system in code. Flowcharts are particularly valuable for team collaboration and documentation, as they provide a universal language for describing processes.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Key Programming Principles Demonstrated</h2>
+            <h3>Core concepts illustrated by vending machines</h3>
+        </div>
+        <div class="highlight-box">
+            This algorithm ensures a smooth user experience by managing both successful and unsuccessful transactions. It demonstrates key programming principles that apply across all software development:
+            <ul>
+                <li><strong>Sequential execution:</strong> Steps occur in a specific order, ensuring predictable behavior</li>
+                <li><strong>Conditional branching:</strong> Actions depend on payment sufficiency, demonstrating decision-making logic</li>
+                <li><strong>Input/output operations:</strong> Interacting with users and the machine's components through clear communication</li>
+                <li><strong>Error handling:</strong> Managing insufficient payment scenarios gracefully without system failure</li>
+                <li><strong>State management:</strong> Tracking the current transaction status and user input throughout the process</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Real-World Enhancements</h2>
+            <h3>Advanced vending machine features</h3>
+        </div>
+        <p>In real-world applications, vending machines include more sophisticated features that demonstrate advanced programming concepts:</p>
+        <ul>
+            <li><strong>Inventory management:</strong> Tracks stock levels in real-time and prevents sales of out-of-stock items</li>
+            <li><strong>Payment validation:</strong> Accepts and verifies coins, bills, credit cards, and mobile payments</li>
+            <li><strong>Error-handling systems:</strong> Addresses mechanical issues like jammed products or coin return failures</li>
+            <li><strong>Sales data collection:</strong> Gathers analytics for business intelligence and restocking optimization</li>
+            <li><strong>Multiple payment options:</strong> Supports credit cards, mobile wallets, and contactless payments</li>
+            <li><strong>Digital receipts:</strong> Sends transaction confirmations via email or SMS</li>
+        </ul>
+        <p>Modern vending machines can connect to the internet for remote monitoring, creating opportunities for IoT (Internet of Things) applications. Operators can:</p>
+        <ul>
+            <li>Check inventory levels remotely and receive alerts when products are running low</li>
+            <li>Perform predictive maintenance based on usage patterns and mechanical sensor data</li>
+            <li>Adjust prices dynamically based on demand, time of day, or promotional campaigns</li>
+            <li>Analyze purchasing trends to optimize product selection and placement</li>
+        </ul>
+        <p>Some advanced systems even use computer vision to confirm item dispensing accuracy and machine learning to optimize product placement based on purchase history. These enhancements transform simple vending machines into sophisticated retail platforms.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Why Vending Machines Matter in Learning Algorithms</h2>
+            <h3>Introduction to algorithmic thinking</h3>
+        </div>
+        <div class="highlight-box">
+            Although the core logic is simple, vending machines serve as an excellent introduction to algorithmic thinking. They provide a clear real-life model of conditional processing, input handling, and automated decision-making—concepts that form the foundation of more complex software and hardware systems. By mastering these fundamental concepts through familiar examples, students build confidence and develop problem-solving skills that transfer to more advanced programming challenges. The vending machine example demonstrates that even sophisticated technology begins with basic logical principles that anyone can understand and apply.
+        </div>
+    </section>
+</div>
+  `
+},
+
+ {
+    id: 5,
+    image: "picture/decimal to binary.jpg",
+    title: "Number System Practice: Converting Decimal 25 to Binary and Hexadecimal",
+    author: "GYUAN KIM",
+    date: "2025.11.27",
+    excerpt: "An overview of number systems and how they form the foundation of computer operations.",
+    content: `
+    <div class="divider"></div>
+<div class="container">
+
+    <section class="intro">
+       <p>A fundamental concept in computer science is understanding number systems. Humans typically use the decimal system (Base-10), while computers use binary (Base-2), and programmers often work with hexadecimal (Base-16). Understanding these different number systems is essential because computers process all information as binary data—sequences of 0s and 1s. However, binary numbers can become very long and difficult to read, which is why hexadecimal notation is frequently used as a more compact and human-readable representation.</p>
+       <p>Let's practice converting the decimal number 25 into both binary and hexadecimal, exploring the mathematical principles behind each conversion method.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>1. Decimal → Binary Conversion</h2>
+        </div>
+        <p>The most common method to convert a decimal number to binary is repeated division by 2 and recording the remainders. You continue dividing until the quotient becomes 0. The binary number is then obtained by reading the remainders in reverse order (from bottom to top). This method works because binary is a base-2 system, where each digit represents a power of 2.</p>
+        <p>Binary numbers are the foundation of all digital computing. Every piece of data stored in a computer—text, images, videos, or programs—is ultimately represented as a sequence of binary digits. Understanding binary conversion helps programmers work with low-level operations, bitwise calculations, and memory management.</p>
+        <div class="example-block">
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>Division</th>
+                        <th>Quotient</th>
+                        <th>Remainder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>25 ÷ 2</td><td>12</td><td>1</td></tr>
+                    <tr><td>12 ÷ 2</td><td>6</td><td>0</td></tr>
+                    <tr><td>6 ÷ 2</td><td>3</td><td>0</td></tr>
+                    <tr><td>3 ÷ 2</td><td>1</td><td>1</td></tr>
+                    <tr><td>1 ÷ 2</td><td>0</td><td>1</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p><strong>Binary Result:</strong> Reading the remainders from bottom to top gives <strong>11001₂</strong>.</p>
+        <p>We can verify this result by calculating: (1×2⁴) + (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 16 + 8 + 0 + 0 + 1 = 25. This demonstrates how each binary digit represents a power of 2, with the rightmost digit representing 2⁰ (1), the next representing 2¹ (2), and so on.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>2. Decimal → Hexadecimal Conversion</h2>
+        </div>
+        <p>To convert decimal 25 to hexadecimal, divide the number by 16 and record the remainder. Hexadecimal (base-16) uses digits 0-9 and letters A-F to represent values 0-15. This system is particularly useful in computing because each hexadecimal digit directly corresponds to exactly four binary digits, making conversions between binary and hexadecimal straightforward.</p>
+        <p>Hexadecimal notation is widely used in programming for representing memory addresses, color codes in web design (e.g., #FF5733), and debugging low-level code. It provides a much more compact representation than binary while still maintaining a clear relationship to the underlying binary data.</p>
+        <div class="example-block">
+            <table border="1" cellspacing="0" cellpadding="5">
+                <thead>
+                    <tr>
+                        <th>Division</th>
+                        <th>Quotient</th>
+                        <th>Remainder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>25 ÷ 16</td><td>1</td><td>9</td></tr>
+                    <tr><td>1 ÷ 16</td><td>0</td><td>1</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p><strong>Hexadecimal Result:</strong> Reading the remainders from bottom to top gives <strong>19₁₆</strong> (often written as 0x19 in programming contexts).</p>
+        <p>We can verify: (1×16¹) + (9×16⁰) = 16 + 9 = 25. The hexadecimal system's efficiency becomes more apparent with larger numbers—for example, the decimal number 255 is FF in hexadecimal but 11111111 in binary.</p>
+    </section>
+
+    <div class="highlight-box">
+        <p>This exercise demonstrates how the same value can be represented in different number systems, which is fundamental for understanding computer data representation and programming tasks. Mastering number system conversions enables programmers to work effectively with memory addresses, perform bitwise operations, debug low-level code, and understand how computers store and process information at the hardware level. Whether working with network protocols, graphics programming, or system-level development, fluency in multiple number systems is an essential skill for any computer scientist.</p>
+    </div>
+</div>
+    `
+},
+
+ {
+    id: 6,
+    image: "picture/general purpose specific software comparison.jpg",
+    title: "Software Comparison: General-Purpose vs. Specific-Purpose Software",
+    author: "GYUAN KIM",
+    date: "2025.11.25",
+    excerpt: "A breakdown of the core concepts behind computer networking, from signals to communication protocols.",
+    content: `
+<div class="divider"></div>
+<div class="container">
+
+    <section class="intro">
+       <p>Software can be broadly categorized based on its intended use into General-Purpose Software and Specific-Purpose Software. These two types differ clearly in design objectives, functionality, and primary users. Understanding this distinction is crucial for selecting the right tools for specific tasks and for software developers who must decide whether to build flexible general solutions or highly specialized applications tailored to particular industries.</p>
+       <p>The choice between general-purpose and specific-purpose software often involves trade-offs between flexibility, ease of use, cost, and the depth of specialized features required for professional work.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>1. General-Purpose Software</h2>
+        </div>
+        <p>General-purpose software is designed to serve a wide range of users and perform various types of tasks across multiple domains. These applications prioritize versatility and accessibility, making them suitable for everyday personal and professional use.</p>
+        <p><strong>Examples:</strong> MS Word, Google Sheets, Adobe Photoshop, web browsers, etc.</p>
+        <ul class="list">
+            <li><strong>Range of Functions:</strong> Offers general-purpose functions across multiple domains, such as document creation, data analysis, and image editing. For example, MS Word can be used to create reports, letters, resumes, books, newsletters, and other document types without requiring specialized training.</li>
+            <li><strong>Users:</strong> Designed with intuitive interfaces for both non-experts and professional users. The learning curve is typically moderate, and extensive documentation and community support are available.</li>
+            <li><strong>Flexibility:</strong> Allows for some customization through settings, templates, and plugins, but may not fully meet highly specialized industry requirements. Users can often extend functionality through add-ons or scripting.</li>
+            <li><strong>Cost-Effectiveness:</strong> Generally more affordable due to large user bases and subscription models that distribute development costs across many customers.</li>
+        </ul>
+        <p><strong>Use Cases:</strong> Writing school assignments, managing personal budgets, basic image editing, creating presentations, and other everyday office or personal tasks. These tools are ideal for individuals and small businesses that need versatile solutions without industry-specific requirements.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>2. Specific-Purpose Software</h2>
+        </div>
+        <p>Specific-purpose software is tailored to handle a particular industry or specialized task. These applications provide deep functionality optimized for specific workflows and regulatory requirements.</p>
+        <p><strong>Examples:</strong> Hospital EMR systems, airline reservation systems, payroll software, CAD programs, etc.</p>
+        <ul class="list">
+            <li><strong>Depth of Functionality:</strong> Provides highly specialized features optimized for a specific task. For example, payroll software is designed to calculate taxes, social insurance deductions, year-end adjustments, and comply with constantly changing tax regulations accurately.</li>
+            <li><strong>Users:</strong> Primarily used by professionals or specialists within the relevant field who require advanced features and industry-specific capabilities.</li>
+            <li><strong>Compliance:</strong> Built to meet legal and regulatory requirements specific to the industry, such as HIPAA compliance for healthcare software or financial reporting standards for accounting systems.</li>
+            <li><strong>Integration:</strong> Often designed to integrate seamlessly with other industry-specific tools and existing enterprise systems.</li>
+            <li><strong>Support and Training:</strong> Typically comes with specialized training programs and dedicated support teams familiar with industry needs.</li>
+        </ul>
+        <p><strong>Use Cases:</strong> Managing company payroll and taxes, maintaining patient records and appointments, designing architectural plans, creating 3D models for engineering, conducting scientific simulations, and other professional tasks requiring domain expertise.</p>
+
+        <div class="section-header">
+            <h2>Comparison Table</h2>
+        </div>
+        <div class="example-block">
+            <table class="minimal-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>General-Purpose (MS Word)</th>
+                        <th>Specific-Purpose (Payroll)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Purpose</td>
+                        <td>Broad document creation and editing</td>
+                        <td>Payroll calculation and tax/insurance management</td>
+                    </tr>
+                    <tr>
+                        <td>Function</td>
+                        <td>Standard formatting, fonts, layout features</td>
+                        <td>Complex tax rules and automated deduction calculations</td>
+                    </tr>
+                    <tr>
+                        <td>Users</td>
+                        <td>General users, students, office workers</td>
+                        <td>HR/accounting professionals</td>
+                    </tr>
+                    <tr>
+                        <td>Flexibility</td>
+                        <td>High (works for various document types)</td>
+                        <td>Low (specialized for payroll tasks)</td>
+                    </tr>
+                    <tr>
+                        <td>Learning Curve</td>
+                        <td>Low to moderate</td>
+                        <td>Steep, requires domain knowledge</td>
+                    </tr>
+                    <tr>
+                        <td>Cost</td>
+                        <td>Relatively affordable</td>
+                        <td>Higher, often with licensing fees</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="highlight-box">
+            <p>Both software types play essential roles in their respective domains and continue to evolve to meet the diverse demands of modern society. The trend toward cloud-based software has blurred some distinctions, with general-purpose tools incorporating more specialized features through plugins and extensions, while specific-purpose software becomes more accessible through improved user interfaces and SaaS (Software as a Service) delivery models.</p>
+        </div>
+    </section>
+</div>
+`
+},
+  {
+    id: 7,
+    image: "picture/IPOS cycle diagram.png",
+    title: "Fundamentals of Computer Operation: The IPOS Cycle and Key Device Functions",
+    author: "GYUAN KIM",
+    date: "2025.11.26",
+    excerpt: "An exploration of key internet technologies that power modern communication and information access.",
+    content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+       <p>A computer operates based on the IPOS cycle (Input-Processing-Output-Storage), which represents four fundamental stages of computing. This cycle illustrates the basic principle of how computers work: receiving data, processing it, presenting results, and storing it for future use. Every computing device, from smartphones to supercomputers, follows this fundamental model. Understanding the IPOS cycle is essential for anyone working with technology, as it provides a framework for troubleshooting problems, optimizing performance, and designing efficient systems.</p>
+       <p>Each stage of the IPOS cycle involves specialized hardware components working together seamlessly. Below is a breakdown of the main hardware devices involved in each stage and their functions.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>1. Input Devices</h2>
+            <h3>Converting user actions into digital signals</h3>
+        </div>
+        <p>Input devices allow a computer to receive data and commands from the user or the environment by converting them into digital signals that the system can process. Without input devices, computers would have no way to receive instructions or data from the outside world. Modern input devices range from simple mechanical keyboards to sophisticated biometric scanners and motion sensors.</p>
+        <div class="example-block">
+            <table class="minimal-table">
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Keyboard, Mouse</td>
+                        <td>Converts keystrokes or mouse movements into digital data for the computer. These are the most common input devices for desktop computing.</td>
+                    </tr>
+                    <tr>
+                        <td>Scanner, Microphone</td>
+                        <td>Converts analog information such as documents, images, or sound into digital form for input and processing.</td>
+                    </tr>
+                    <tr>
+                        <td>Touchscreen, Stylus</td>
+                        <td>Provides direct interaction with on-screen elements, combining input and output in a single interface.</td>
+                    </tr>
+                    <tr>
+                        <td>Webcam, Biometric Scanner</td>
+                        <td>Captures visual data or biological characteristics for security, communication, or data entry purposes.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>2. Processing Devices</h2>
+            <h3>The computational brain of the computer</h3>
+        </div>
+        <p>Processing devices handle the computation and execution of instructions, acting as the brain of the computer. The CPU and RAM work together to execute programs and manage data efficiently. The speed and capability of these components directly determine overall system performance.</p>
+        <div class="example-block">
+            <table class="minimal-table">
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Central Processing Unit (CPU)</td>
+                        <td>Interprets and executes all instructions. It controls the overall speed and performance of the system. Modern CPUs contain billions of transistors and can perform billions of calculations per second.</td>
+                    </tr>
+                    <tr>
+                        <td>RAM (Random Access Memory)</td>
+                        <td>Temporarily stores programs and data currently in use for fast processing. Data is lost when the computer is turned off. More RAM allows for better multitasking and faster application performance.</td>
+                    </tr>
+                    <tr>
+                        <td>GPU (Graphics Processing Unit)</td>
+                        <td>Specialized processor designed for rendering graphics and parallel processing tasks, essential for gaming, video editing, and AI applications.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>3. Output Devices</h2>
+            <h3>Presenting processed information to users</h3>
+        </div>
+        <p>Output devices present processed data in a form that users can perceive or utilize. They translate the computer's digital signals into human-readable formats such as visual displays, printed documents, or audio.</p>
+        <div class="example-block">
+            <table class="minimal-table">
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Monitor, Printer</td>
+                        <td>Displays processed information visually or produces printed documents. Modern monitors offer high resolution and color accuracy for professional work.</td>
+                    </tr>
+                    <tr>
+                        <td>Speakers, Headphones</td>
+                        <td>Converts digital signals into sound waves for audio output, enabling multimedia experiences and communication.</td>
+                    </tr>
+                    <tr>
+                        <td>Projector</td>
+                        <td>Displays computer output on large surfaces for presentations, education, and entertainment.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>4. Storage Devices</h2>
+            <h3>Preserving data for long-term use</h3>
+        </div>
+        <p>Storage devices preserve data and programs for long-term use. Unlike RAM, the data remains intact even when the computer is powered off. Storage technology has evolved dramatically, from magnetic tapes to solid-state drives offering incredible speed and reliability.</p>
+        <div class="example-block">
+            <table class="minimal-table">
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Function</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>HDD (Hard Disk Drive)</td>
+                        <td>Uses magnetic storage to store large amounts of data affordably. Traditional HDDs offer high capacity at lower cost but are slower than SSDs.</td>
+                    </tr>
+                    <tr>
+                        <td>SSD (Solid State Drive)</td>
+                        <td>Uses flash memory for much faster data access, dramatically improving boot times and application loading. More expensive but increasingly standard in modern computers.</td>
+                    </tr>
+                    <tr>
+                        <td>Cloud Storage</td>
+                        <td>Stores data on remote network servers, enabling access from any device with internet connectivity and providing automatic backup and synchronization.</td>
+                    </tr>
+                    <tr>
+                        <td>External Storage</td>
+                        <td>USB drives, external HDDs, and portable SSDs provide additional storage capacity and data portability.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="highlight-box">
+        <p>These four stages of the IPOS cycle are interconnected and essential for the reliable operation of any modern computer system. Understanding the roles of each device helps explain how computers manage, process, and deliver information effectively. As technology advances, these components become faster, more efficient, and more integrated, but the fundamental IPOS model remains the cornerstone of computer architecture. Whether troubleshooting technical issues, upgrading hardware, or designing new systems, the IPOS framework provides a clear mental model for understanding computer operations.</p>
+    </div>
+</div>
+    `
+},
+  {
+    id: 8,
+    image:"picture/Utility Applications.jpg",
+    title: "Essential Helpers in the Digital World: 3 Utility Applications",
+    author: "GYUAN KIM",
+    date: "2025.11.27",
+    excerpt: "An introduction to cybersecurity threats and strategies for safeguarding digital systems.",
+    content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+        <p>Utility applications are software programs designed to help analyze, configure, optimize, or maintain computer systems. They play a crucial role in keeping systems stable and efficient, allowing users to focus on their primary tasks. While productivity software helps users create content and accomplish work, utility applications work behind the scenes to ensure that the computer itself runs smoothly, securely, and efficiently.</p>
+        <p>Without these essential tools, computers would be vulnerable to malware, data loss, and performance degradation. Understanding and properly using utility applications is fundamental to computer literacy and digital security.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>1. Antivirus Software</h2>
+        </div>
+        <p class="function"><strong>Function:</strong></p>
+        <p>Protects computer systems from malware such as viruses, worms, Trojan horses, ransomware, and spyware. Modern antivirus software uses multiple detection methods including signature-based scanning, heuristic analysis, behavioral monitoring, and machine learning to identify and neutralize threats. Common features include real-time monitoring, scheduled scans, automatic updates, quarantining suspicious files, and removing confirmed threats.</p>
+        <p>Antivirus software constantly evolves to combat new threats as cybercriminals develop increasingly sophisticated attack methods. Cloud-based threat intelligence allows modern antivirus solutions to respond to emerging threats within minutes.</p>
+
+        <p class="benefits"><strong>Key Benefits:</strong></p>
+        <ul class="list">
+            <li><strong>Data Protection:</strong> Prevents file corruption, unauthorized data access, or sensitive information leaks caused by malware, ensuring data integrity and confidentiality. Protects personal information, financial data, and business documents from theft or destruction.</li>
+            <li><strong>System Stability:</strong> Stops infected files from consuming system resources, slowing down performance, or causing system crashes, maintaining a reliable and responsive computing environment.</li>
+            <li><strong>Network Security:</strong> Prevents infected computers from spreading malware to other devices on the same network, protecting entire households or organizations.</li>
+            <li><strong>Web Protection:</strong> Blocks access to malicious websites, prevents phishing attacks, and scans downloads before they can harm the system.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>2. Data Backup Software</h2>
+        </div>
+        <p class="function"><strong>Function:</strong></p>
+        <p>Copies and preserves data from hard drives or specific folders to external storage locations such as cloud services, external HDDs, network-attached storage (NAS), or USB drives in a secure and recoverable format. Advanced backup software offers features like incremental backups (only copying changed files), versioning (maintaining multiple versions of files), encryption for security, compression to save space, and automated scheduling to ensure regular backups without user intervention.</p>
+        <p>The 3-2-1 backup rule recommends keeping three copies of important data, on two different types of media, with one copy stored offsite. Modern backup solutions make following this best practice easier than ever.</p>
+
+        <p class="benefits"><strong>Key Benefits:</strong></p>
+        <ul class="list">
+            <li><strong>Disaster Recovery:</strong> Allows for quick recovery of systems and work in case of hardware failure, ransomware attacks, accidental deletions, natural disasters, or theft. Reduces downtime and stress when data loss occurs.</li>
+            <li><strong>Business Continuity:</strong> Protects critical business data, customer information, financial records, and intellectual property, ensuring operations can continue without interruption and minimizing potential financial losses, legal liability, and reputational damage from data loss.</li>
+            <li><strong>Version Control:</strong> Maintains multiple versions of files, allowing users to recover earlier versions if current files become corrupted or unwanted changes need to be reversed.</li>
+            <li><strong>Peace of Mind:</strong> Knowing that important data is safely backed up reduces anxiety and allows users to work confidently, knowing their digital assets are protected.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>3. File Compression and Management Software</h2>
+        </div>
+        <p class="function"><strong>Function:</strong></p>
+        <p>Combines one or more files into a single compressed archive (ZIP, RAR, 7z, etc.) or reduces individual file sizes using various compression algorithms. Compression works by identifying and eliminating redundant data patterns, allowing files to be stored or transmitted more efficiently. Additional features often include password protection, encryption for security, file splitting for large archives, selective compression, multi-format support, and integration with file managers and cloud storage services.</p>
+        <p>Different compression formats offer various trade-offs between compression ratio, speed, and compatibility. ZIP is universally supported, while 7z typically achieves better compression but requires specific software.</p>
+
+        <p class="benefits"><strong>Key Benefits:</strong></p>
+        <ul class="list">
+            <li><strong>Storage Efficiency:</strong> Compresses large files to make better use of limited hard drive or cloud storage space. Particularly effective for text documents, which can be compressed by 90% or more, though multimedia files see less dramatic reduction.</li>
+            <li><strong>Faster Transfer:</strong> Sending multiple files as a single compressed archive reduces transfer time for email attachments, file uploads, or network transfers. Also simplifies file management by bundling related files together.</li>
+            <li><strong>Organization:</strong> Archives help organize projects by grouping related files, making backup and archival tasks more manageable.</li>
+            <li><strong>Security:</strong> Password-protected archives prevent unauthorized access to sensitive files during storage or transmission.</li>
+        </ul>
+    </section>
+
+    <div class="highlight-box">
+        <p>Although utility applications are often invisible in daily use, they serve as essential, behind-the-scenes helpers, ensuring system efficiency, security, and data reliability. Regular use of these tools—keeping antivirus software updated, maintaining current backups, and managing storage efficiently—forms the foundation of responsible computer ownership. Together, these utilities create a protective ecosystem that allows users to work productively while minimizing risks and maintaining optimal system performance. As our dependence on digital technology grows, the importance of these utility applications only increases.</p>
+    </div>
+</div>
+    `
+},
+
+  {
+    id: 9,
+    image:"picture/database.jpg",
+    title: "Efficient Information Management: Organization of a Student Information Database",
+    author: "GYUAN KIM",
+    date: "2025.11.27",
+    excerpt: "A detailed look at the physical technologies behind network infrastructure.",
+    content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+        <p>A <strong>Student Information Database (SIDB)</strong> is a structured system used in schools and educational institutions to store and manage important data such as personal information, attendance records, academic grades, course enrollments, and disciplinary actions. Managing student information efficiently is crucial for educational institutions to provide quality education, track student progress, generate reports, and make data-driven decisions.</p>
+        <p>This system typically follows the principles of a <strong>Relational Database</strong>, where information is organized into separate tables that are interconnected through relationships. This design ensures data consistency, eliminates redundancy, and maintains data integrity across the entire system. Understanding database organization is essential not only for database administrators but also for educators and administrators who rely on these systems daily.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>1. Database Organization: Tables and Relationships</h2>
+        </div>
+        <p>Instead of storing all student details in one massive table—which would lead to data redundancy, inconsistency, and update anomalies—the database is normalized into multiple specialized tables. Normalization is a database design technique that organizes data to reduce redundancy and improve data integrity.</p>
+        <p>Each table focuses on a specific entity or concept, and tables are linked through keys to maintain relationships between different data elements.</p>
+
+        <strong>Core Tables in a Student Database</strong>
+        <div class="example-block">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Table Name</th>
+                        <th>Purpose / Information Stored</th>
+                        <th>Relationship</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>STUDENTS</td>
+                        <td>Stores fundamental student information including ID, full name, date of birth, contact details, and current grade level. Serves as the master reference table.</td>
+                        <td>Student ID acts as the Primary Key, uniquely identifying each student and linking to other tables.</td>
+                    </tr>
+                    <tr>
+                        <td>COURSES</td>
+                        <td>Contains comprehensive information about all courses offered, including course codes, names, descriptions, credit hours, and prerequisites.</td>
+                        <td>Course ID serves as Primary Key. Connected to GRADES and ENROLLMENTS tables.</td>
+                    </tr>
+                    <tr>
+                        <td>GRADES</td>
+                        <td>Records academic performance for each student in specific courses, storing scores, letter grades, and completion status.</td>
+                        <td>Links STUDENTS and COURSES using Student ID and Course ID as Foreign Keys, creating a many-to-many relationship.</td>
+                    </tr>
+                    <tr>
+                        <td>ATTENDANCE</td>
+                        <td>Maintains daily attendance logs including absences, tardiness, early departures, and attendance reasons in chronological order.</td>
+                        <td>References STUDENTS by Student ID to track attendance patterns and generate reports.</td>
+                    </tr>
+                    <tr>
+                        <td>TEACHERS</td>
+                        <td>Stores teacher information including names, departments, contact information, and qualifications.</td>
+                        <td>Teacher ID links to COURSES table, indicating which teacher is responsible for each course.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>These tables interact through <strong>Primary Keys</strong> (unique identifiers within a table) and <strong>Foreign Keys</strong> (references to primary keys in other tables), ensuring accurate and consistent data relationships across the system. This relational structure allows complex queries like "Find all students who received an A in Computer Science taught by Prof. Smith" to be executed efficiently.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>2. Example of Key Data Fields</h2>
+        </div>
+        <p>Each table consists of fields (columns) that store specific types of information. Each field has a defined data type (text, number, date, etc.) that determines what kind of information can be stored and how it's validated. Proper data typing prevents errors and ensures data quality.</p>
+
+        <strong>Key Fields per Table</strong>
+        <div class="example-block">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Table</th>
+                        <th>Field</th>
+                        <th>Data Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th rowspan="5">STUDENTS</th>
+                        <td>Student_ID</td>
+                        <td>Primary Key</td>
+                        <td>Unique identifier (e.g., 2025001) for each student, never reused</td>
+                    </tr>
+                    <tr>
+                        <td>Full_Name</td>
+                        <td>Text</td>
+                        <td>Student's complete legal name for official records</td>
+                    </tr>
+                    <tr>
+                        <td>Date_of_Birth</td>
+                        <td>Date</td>
+                        <td>Birthdate used for age verification and eligibility determination</td>
+                    </tr>
+                    <tr>
+                        <td>Contact_Email</td>
+                        <td>Text</td>
+                        <td>Primary email for communication, must be valid format</td>
+                    </tr>
+                    <tr>
+                        <td>Grade_Level</td>
+                        <td>Number</td>
+                        <td>Current year level or grade (e.g., 9, 10, 11, 12)</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="3">COURSES</th>
+                        <td>Course_ID</td>
+                        <td>Primary Key</td>
+                        <td>Unique course identifier (e.g., CS101)</td>
+                    </tr>
+                    <tr>
+                        <td>Course_Name</td>
+                        <td>Text</td>
+                        <td>Full descriptive name (e.g., "Introduction to Computer Science")</td>
+                    </tr>
+                    <tr>
+                        <td>Teacher_ID</td>
+                        <td>Foreign Key</td>
+                        <td>References the teacher responsible for the course</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="4">GRADES</th>
+                        <td>Grade_ID</td>
+                        <td>Primary Key</td>
+                        <td>Unique identifier for each grade record</td>
+                    </tr>
+                    <tr>
+                        <td>Student_ID</td>
+                        <td>Foreign Key</td>
+                        <td>Identifies which student earned the grade</td>
+                    </tr>
+                    <tr>
+                        <td>Course_ID</td>
+                        <td>Foreign Key</td>
+                        <td>Identifies the course for which the grade was earned</td>
+                    </tr>
+                    <tr>
+                        <td>Score</td>
+                        <td>Number/Text</td>
+                        <td>Numerical score (0-100) or letter grade (A, B, C, etc.)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p>By designing and organizing the database in this structured, normalized way, schools gain powerful capabilities to respond quickly and accurately to complex queries such as retrieving a student's complete academic history, identifying students at risk of failing, generating transcript reports, analyzing course performance trends, or tracking attendance patterns across the institution. This systematic approach to data management is fundamental to modern educational administration.</p>
+    </section>
+</div>
+    `
+},
+
+  {
+    id: 10,
+    image:"picture/Network Topologies Structure and Strategy.png",
+    title: "Network Topology: Structure and Advantages",
+    author: "GYUAN KIM",
+    date: "2025.11.28",
+    excerpt: "An explanation of the various network topologies and how each impacts performance and reliability.",
+    content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+        <p><strong>Network topology</strong> refers to the physical or logical arrangement of computer systems or network devices and how they are connected to communicate with each other. The choice of topology significantly impacts network performance, reliability, cost, ease of management, and scalability. Understanding network topologies is essential for network administrators, IT professionals, and anyone involved in designing or maintaining computer networks.</p>
+        <p>Different topologies suit different scenarios—small offices may prefer simple, cost-effective solutions, while large enterprises and critical infrastructure require robust, fault-tolerant designs. Below, we examine two widely used topologies—Star and Mesh—and their key characteristics, advantages, and disadvantages.</p>
+    </section>
+<section class="section">
+        <div class="section-header">
+            <h2>1. Star Topology</h2>
+            <h3>Centralized network architecture</h3>
+        </div>
+        <p><strong>Structure:</strong> In a star topology, all network devices (nodes such as computers, printers, servers) are individually connected to a central hub or switch, forming a star-like pattern radiating from the center. The central device manages all communication within the network, routing data between devices. This centralized architecture is the most common topology in modern local area networks (LANs), including home and office networks.</p>
+        
+        <p><strong>Advantages:</strong></p>
+        <ul>
+            <li><strong>Easy management and fault isolation:</strong> If one node fails or a cable is damaged, it does not affect the other nodes or the entire network. The central device makes it easy to isolate, identify, and diagnose problems quickly without network-wide disruption. Troubleshooting is straightforward because each connection is independent.</li>
+            <li><strong>Simple scalability:</strong> Adding or removing nodes is straightforward as long as available ports exist on the central device. New devices can be connected without disrupting existing connections, making network expansion effortless.</li>
+            <li><strong>High performance:</strong> Data passes through the central device directly to its destination without unnecessary hops, minimizing collisions and maintaining stable, predictable performance. Modern switches use dedicated bandwidth for each connection, preventing network congestion.</li>
+            <li><strong>Centralized network monitoring:</strong> The central hub or switch provides a single point for monitoring traffic, implementing security policies, and managing network resources efficiently.</li>
+        </ul>
+
+        <p><strong>Disadvantages:</strong></p>
+        <ul>
+            <li><strong>Single point of failure:</strong> If the central hub or switch fails, the entire network becomes inoperative, disconnecting all devices. This vulnerability requires implementing redundancy measures such as backup switches or failover systems in critical environments.</li>
+            <li><strong>Cable requirements:</strong> Each device requires a dedicated cable to the central point, which can become expensive and complex in large networks with many nodes distributed over wide areas.</li>
+            <li><strong>Limited by central device capacity:</strong> The number of devices that can connect is limited by the number of ports on the central switch or hub.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>2. Mesh Topology</h2>
+            <h3>Distributed, redundant network architecture</h3>
+        </div>
+        <p><strong>Structure:</strong> In a mesh topology, each node is directly connected to every other node in the network, creating multiple redundant paths for data transmission. In a full mesh configuration with n nodes, the network requires n(n−1)/2 individual connections. For example, a network with 5 nodes requires 10 connections, while 10 nodes require 45 connections. Partial mesh topologies connect only critical nodes with redundant paths, reducing complexity while maintaining important redundancy.</p>
+
+        <p><strong>Advantages:</strong></p>
+        <ul>
+            <li><strong>Maximum reliability and fault tolerance:</strong> Even if one or multiple connections fail, data can reach its destination via alternative paths, providing strong self-healing capabilities. The network automatically reroutes traffic around failed links, ensuring continuous operation even during hardware failures.</li>
+            <li><strong>High security and dedicated paths:</strong> Communication between nodes occurs over dedicated connections, reducing the risk of data interception and enabling faster, more secure data transmission. Each connection can be independently encrypted and secured.</li>
+            <li><strong>No single point of failure:</strong> Unlike star topology, there is no central device whose failure would bring down the entire network. The distributed nature ensures maximum resilience.</li>
+            <li><strong>Optimal load distribution:</strong> Traffic can be distributed across multiple paths, preventing any single connection from becoming a bottleneck and ensuring efficient bandwidth utilization.</li>
+        </ul>
+
+        <p><strong>Disadvantages:</strong></p>
+        <ul>
+            <li><strong>High cost:</strong> As the number of nodes increases, installation costs for cabling, network interfaces, and infrastructure grow exponentially. The large number of required connections makes mesh topologies economically impractical for most general-purpose networks.</li>
+            <li><strong>Complex installation and management:</strong> The abundance of connections and network interfaces makes initial installation, configuration, troubleshooting, and reconfiguration significantly more complicated, requiring experienced network professionals.</li>
+            <li><strong>Maintenance challenges:</strong> With so many connections, identifying and repairing specific cable or connection failures becomes time-consuming and difficult.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>3. Bus Topology</h2>
+            <h3>Linear network architecture with shared backbone</h3>
+        </div>
+        <p><strong>Structure:</strong> All nodes share a single central cable, called the backbone or trunk. Data travels along the cable in both directions, and all devices connected to the bus can read the data, but only the device with the matching address accepts and processes it. Terminators at both ends of the cable prevent signal reflection and maintain signal integrity.</p>
+
+        <p><strong>Advantages:</strong></p>
+        <ul>
+            <li><strong>Cost-effective and simple:</strong> Requires minimal cabling compared to other topologies since all devices share one main cable. Installation is straightforward and inexpensive, making it ideal for small networks or temporary setups like classrooms or small offices.</li>
+            <li><strong>Easy to extend:</strong> Adding new devices is as simple as connecting them to the backbone cable without disrupting existing connections.</li>
+            <li><strong>Requires less cable:</strong> Uses significantly less cable than star topology, reducing material costs and simplifying cable management.</li>
+        </ul>
+
+        <p><strong>Disadvantages:</strong></p>
+        <ul>
+            <li><strong>Single point of failure:</strong> If the backbone cable is damaged or broken at any point, the entire network fails, disconnecting all devices. This makes bus topology unreliable for critical applications.</li>
+            <li><strong>Performance issues:</strong> Heavy network traffic leads to data collisions as multiple devices attempt to transmit simultaneously. As more devices are added, performance degrades significantly due to increased collision probability and limited bandwidth.</li>
+            <li><strong>Difficult troubleshooting:</strong> Identifying the exact location of cable breaks or connection problems can be time-consuming and challenging.</li>
+            <li><strong>Limited scalability:</strong> Network expansion is constrained by cable length limitations and performance degradation with additional devices.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>4. Ring Topology</h2>
+            <h3>Circular network architecture with sequential data flow</h3>
+        </div>
+        <p><strong>Structure:</strong> Each node connects to exactly two others, forming a closed circular path. Data typically moves in one direction around the ring (unidirectional), though some implementations use bidirectional rings for redundancy. Each node receives data, checks if it's the intended recipient, and if not, passes it to the next node in sequence.</p>
+
+        <p><strong>Advantages:</strong></p>
+        <ul>
+            <li><strong>No central hub needed:</strong> Eliminates the cost and single-point-of-failure risk of a central switch or hub. The distributed architecture can be more economical for certain applications.</li>
+            <li><strong>Minimized collisions:</strong> Data travels in a predetermined direction with each node processing packets in sequence, significantly reducing the chance of data collisions compared to bus topology. Token-passing protocols ensure orderly data transmission.</li>
+            <li><strong>Predictable performance:</strong> Equal access for all nodes and consistent data travel time make network performance more predictable and manageable.</li>
+            <li><strong>Better for heavy loads:</strong> Can handle higher traffic volumes than bus topology without significant performance degradation.</li>
+        </ul>
+
+        <p><strong>Disadvantages:</strong></p>
+        <ul>
+            <li><strong>Failure sensitivity:</strong> A single node failure or cable break can disrupt the entire ring, stopping all network communication. However, dual-ring implementations (where data can travel in both directions) provide redundancy and fault tolerance.</li>
+            <li><strong>Difficult to expand or reconfigure:</strong> Adding or removing nodes typically requires temporarily stopping network operations, causing downtime. The ring must be broken and reconnected during modifications.</li>
+            <li><strong>Troubleshooting complexity:</strong> Isolating faults can be challenging since problems at one node affect the entire ring's operation.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>5. Hybrid Topology</h2>
+            <h3>Combined network architecture for complex environments</h3>
+        </div>
+        <p><strong>Structure:</strong> A hybrid topology combines two or more basic topologies to leverage the strengths of each while mitigating their weaknesses. Common combinations include Star-Bus (departments connected in star configuration linked by a bus backbone), Star-Ring (star networks connected in a ring), and Tree topology (hierarchical structure combining bus and star). This approach is prevalent in large organizations, campuses, and enterprise networks where different areas have different networking needs.</p>
+
+        <p><strong>Advantages:</strong></p>
+        <ul>
+            <li><strong>Flexibility and scalability:</strong> Network designers can choose the optimal topology for each department, building, or functional area based on specific requirements. Different sections can use topologies best suited to their needs—critical systems might use mesh for reliability while general office areas use cost-effective star configurations.</li>
+            <li><strong>Improved reliability:</strong> Weaknesses inherent in one topology type are compensated by strengths of another. For example, combining star's easy management with ring's collision avoidance creates a more robust overall network.</li>
+            <li><strong>Efficient upgrades and expansion:</strong> Allows for gradual modernization and growth. Organizations can upgrade one section without overhauling the entire network, protecting existing investments while accommodating new technologies.</li>
+            <li><strong>Fault isolation:</strong> Problems in one topology segment don't necessarily affect other segments, improving overall network resilience and uptime.</li>
+            <li><strong>Optimized performance:</strong> Each network segment can be optimized for its specific traffic patterns and performance requirements.</li>
+        </ul>
+
+        <p><strong>Disadvantages:</strong></p>
+        <ul>
+            <li><strong>High complexity:</strong> Designing, implementing, and maintaining a mixed-topology network requires significant expertise and careful planning. Network administrators must understand multiple topology types and how they interact.</li>
+            <li><strong>Higher cost:</strong> Requires more diverse equipment—multiple types of switches, routers, and cabling systems. The variety of components and increased complexity drives up both initial installation and ongoing maintenance costs.</li>
+            <li><strong>Management challenges:</strong> Monitoring, troubleshooting, and securing multiple topology types simultaneously demands sophisticated network management tools and skilled personnel.</li>
+            <li><strong>Documentation requirements:</strong> Complex hybrid networks require detailed documentation to track connections, configurations, and dependencies across different topology segments.</li>
+        </ul>
+    </section>
+    
+    <div class="highlight-box">
+        <p>Most modern Local Area Networks (LANs) in homes, schools, and businesses use <strong>star topology</strong> for its balance of easier management, cost efficiency, and adequate performance for typical use cases. On the other hand, networks requiring extreme reliability—such as the internet's core routers, military communication systems, emergency services, financial trading networks, and industrial control systems—often adopt <strong>mesh or hybrid topologies</strong> to ensure continuous operation even during hardware failures or attacks.</p>
+        <p>Choosing the right topology is one of the most critical decisions in network design, requiring careful consideration of budget constraints, reliability requirements, scalability needs, and management capabilities. Many modern networks implement hybrid approaches, combining star topology for end-user access with mesh topology for critical backbone infrastructure, achieving an optimal balance between cost, performance, and reliability.</p>
+    </div>
+</div>
+    `
+},
+
+{
+    id: 11,
+    image:"picture/Data Privacy and the IT Code of Ethics.png",
+    title: "IT Ethics Issue: Data Privacy and Code of Ethics",
+    author: "GYUAN KIM",
+    date: "2025.11.29",
+    excerpt: "A discussion of ethical principles governing the protection of personal information in the digital age.",
+    content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+       <p>One of the most critical ethical issues in the digital age is <strong>data privacy</strong>—the right of individuals to control how their personal information is collected, used, shared, and stored. As companies and organizations collect and analyze increasingly large amounts of personal data through websites, mobile apps, social media, IoT devices, and various digital services, people are growing more concerned about how this information is being used, who has access to it, and whether it's adequately protected.</p>
+       <p>This is why the ethical responsibility of IT professionals is essential—and it is addressed clearly in professional codes of ethics such as those published by the ACM (Association for Computing Machinery) and KIISE (Korean Institute of Information Scientists and Engineers). These codes provide guidance for professionals to navigate complex ethical dilemmas in their work.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Data Privacy Issues</h2>
+            <h3>Challenges in the digital era</h3>
+        </div>
+        <p>Data privacy refers to an individual's right to control how their personal information—such as names, addresses, financial details, medical records, browsing history, location data, and behavioral patterns—is collected and used. However, advancements in big data analytics, artificial intelligence, and ubiquitous computing continue to challenge this fundamental right. Major privacy concerns include:</p>
+
+        <ul>
+            <li><strong>Misuse of Information:</strong> Organizations may use collected data for purposes beyond what users initially agreed to, such as targeted advertising, selling data to third parties, or political profiling. Users often lack clear understanding of how their data will be used due to complex privacy policies and terms of service.</li>
+            <li><strong>Surveillance and Profiling:</strong> AI algorithms can analyze personal behavior patterns, preferences, purchasing habits, social connections, and even psychological vulnerabilities to create detailed digital profiles. These profiles can be used to predict and influence individual behavior, potentially leading to discrimination in employment, insurance, credit decisions, or unfair manipulation through personalized content.</li>
+            <li><strong>Data Breaches and Security Failures:</strong> Security vulnerabilities or inadequate protection measures may expose sensitive personal information to unauthorized access. High-profile data breaches have affected millions of users, leading to identity theft, financial fraud, phishing attacks, and long-term harm to affected individuals. Once personal data is compromised, it can be difficult or impossible to fully mitigate the damage.</li>
+            <li><strong>Lack of Transparency:</strong> Many companies collect data without clearly informing users what information is gathered, how it's used, or who it's shared with, making informed consent difficult or impossible.</li>
+            <li><strong>Inadequate User Control:</strong> Even when privacy settings exist, they are often complex, hidden, or default to maximum data collection, making it difficult for users to exercise meaningful control over their information.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Role of the IT Code of Ethics and Solutions</h2>
+            <h3>Professional responsibilities and best practices</h3>
+        </div>
+        <p>The IT Code of Ethics (such as those from ACM, IEEE, and KIISE) provides clear principles that help professionals address data privacy concerns responsibly and guide ethical decision-making in technology development and deployment. Key ethical responsibilities include:</p>
+
+        <ul>
+            <li><strong>Respect for Privacy:</strong> IT professionals must respect individuals' privacy rights and ensure that personal data is collected only with informed consent and used strictly for its intended purpose. This aligns with the principle of purpose limitation—data should only be used for the specific purposes users agreed to. Professionals should implement privacy-by-design principles, building privacy protections into systems from the beginning rather than adding them as an afterthought.</li>
+            <li><strong>Strengthening Security:</strong> Professionals have a responsibility to implement strong security measures, such as encryption, secure authentication, access controls, regular security audits, and timely software updates to prevent unauthorized access and data breaches. Security is not optional—it's a fundamental requirement for protecting user trust and preventing harm.</li>
+            <li><strong>Transparency and Fairness:</strong> AI systems and data processing operations should operate transparently, with users informed about what data is collected, how it's used, and how automated decisions are made. Algorithms must be designed to avoid bias and unfair profiling that could discriminate against certain groups based on race, gender, age, or other protected characteristics. This drives the development of explainable AI systems that can justify their decisions.</li>
+            <li><strong>Minimizing Harm:</strong> In cases where personal information may be exposed, misused, or inadequately protected, professionals have a duty to respond immediately, mitigate potential harm, notify affected users promptly, and take corrective action. This includes being proactive about identifying vulnerabilities before they can be exploited.</li>
+            <li><strong>Data Minimization:</strong> Collect only the data that is truly necessary for the intended purpose. Storing excessive personal information increases risk without providing corresponding benefits.</li>
+            <li><strong>User Empowerment:</strong> Provide users with clear, accessible tools to view, modify, export, or delete their personal data, giving them meaningful control over their information.</li>
+        </ul>
+    </section>
+
+    <div class="highlight-box">
+        <p>Ultimately, the IT Code of Ethics serves as a moral compass, guiding IT professionals beyond mere legal compliance toward designing and operating systems based on social responsibility, ethical judgment, and respect for human rights. While laws like GDPR and CCPA establish minimum legal requirements, ethical practice often demands going beyond legal minimums to truly protect user privacy and build trust.</p>
+        <p>As technology becomes increasingly integrated into every aspect of life, the ethical responsibilities of IT professionals grow correspondingly important. By adhering to professional codes of ethics, developers, system administrators, data scientists, and all technology professionals contribute to creating a digital world that respects individual privacy while enabling innovation and progress.</p>
+    </div>
+</div>
+    `
+},
+
+{
+  id: 12,
+  image:"picture/Webpage with HTML.png",
+  title: "Building Your First Personal Webpage with HTML",
+  author: "GYUAN KIM",
+  date: "2025.11.30",
+  excerpt: "A beginner-friendly introduction to creating a simple personal website using HTML.",
+  content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+        <p>Creating a personal webpage is an excellent introduction to web development and offers a hands-on way to learn HTML (HyperText Markup Language)—the foundational language of the web. HTML structures the content of webpages, allowing browsers to interpret and display elements such as headings, paragraphs, images, links, lists, and multimedia content. Every website you visit, from simple blogs to complex web applications, is built on HTML as its fundamental structure.</p>
+        <p>Whether for academic portfolios, professional resumes, creative showcases, or personal blogs, a personal webpage allows individuals to establish an online presence and share their identity, skills, and interests with the world. Learning HTML is the essential first step toward becoming a web developer, and the skills you learn here apply to all modern web technologies.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Understanding HTML Structure</h2>
+            <h3>The building blocks of web pages</h3>
+        </div>
+        <p>HTML uses a system of tags (elements enclosed in angle brackets like <code>&lt;tag&gt;</code>) to define the structure and meaning of web content. Most HTML elements consist of an opening tag, content, and a closing tag. For example, <code>&lt;p&gt;This is a paragraph&lt;/p&gt;</code> creates a paragraph element. Some elements like <code>&lt;img&gt;</code> and <code>&lt;br&gt;</code> are self-closing and don't require closing tags.</p>
+        <p>Modern HTML5 introduced semantic elements like <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code>, and <code>&lt;footer&gt;</code> that provide meaning beyond just presentation, improving accessibility and search engine optimization.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Example: Basic Personal Webpage</h2>
+        </div>
+        <p>Below is a simple example of a personal webpage built using basic HTML elements. This example demonstrates the essential structure every HTML document should have:</p>
+
+<div class="code-block">
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;My Personal Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to My Page&lt;/h1&gt;
+    &lt;p&gt;Hello! My name is Kim, and I'm passionate about technology and design.&lt;/p&gt;
+    
+    &lt;h2&gt;About Me&lt;/h2&gt;
+    &lt;p&gt;I'm a student learning web development and programming.&lt;/p&gt;
+    
+    &lt;h2&gt;My Interests&lt;/h2&gt;
+    &lt;ul&gt;
+        &lt;li&gt;Web Development&lt;/li&gt;
+        &lt;li&gt;Graphic Design&lt;/li&gt;
+        &lt;li&gt;Photography&lt;/li&gt;
+    &lt;/ul&gt;
+    
+    &lt;h2&gt;Contact Me&lt;/h2&gt;
+    &lt;p&gt;Email: &lt;a href="mailto:kim@example.com"&gt;kim@example.com&lt;/a&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  <button class=\"copy-btn\" onclick=\"copyCode(this, 'body { background-color: #f0f8ff; font-family: Arial, sans-serif; color: #333; line-height: 1.6; margin: 0 auto; padding: 20px; max-width: 1200px; } ...')\">Copy</button>
+</div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Key HTML Concepts Explained</h2>
+        </div>
+        <div class="highlight-box">
+            <ul>
+                <li><strong><code>&lt;!DOCTYPE html&gt;</code></strong> declares the document as HTML5, ensuring browsers render it correctly using modern standards.</li>
+                <li><strong><code>&lt;html lang="en"&gt;</code></strong> is the root element that contains all other HTML elements. The <code>lang</code> attribute specifies the language for accessibility and search engines.</li>
+                <li>The <strong><code>&lt;head&gt;</code></strong> section contains metadata like character encoding (<code>&lt;meta charset="UTF-8"&gt;</code>), viewport settings for responsive design, page title, and links to stylesheets or scripts. This content is not displayed on the page but is crucial for proper rendering and SEO.</li>
+                <li>The <strong><code>&lt;body&gt;</code></strong> contains all visible webpage content that users see and interact with.</li>
+                <li><strong>Headings</strong> (<code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code>) create hierarchical structure, with <code>&lt;h1&gt;</code> being most important for main titles and <code>&lt;h6&gt;</code> for minor subheadings.</li>
+                <li><strong>Paragraphs</strong> (<code>&lt;p&gt;</code>) display blocks of text with automatic spacing.</li>
+                <li><strong>Lists</strong> organize information: unordered lists (<code>&lt;ul&gt;</code>) for bullet points and ordered lists (<code>&lt;ol&gt;</code>) for numbered sequences.</li>
+                <li><strong>Links</strong> (<code>&lt;a href="..."&gt;</code>) connect pages and create navigation. The <code>href</code> attribute specifies the destination URL.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Next Steps in Web Development</h2>
+        </div>
+        <p>Once you master basic HTML structure, you can enhance your webpage by:</p>
+        <ul>
+            <li>Adding images with the <code>&lt;img&gt;</code> tag to make your page visually appealing</li>
+            <li>Creating navigation menus with lists and links for multi-page websites</li>
+            <li>Embedding videos and audio with <code>&lt;video&gt;</code> and <code>&lt;audio&gt;</code> elements</li>
+            <li>Building forms with <code>&lt;form&gt;</code>, <code>&lt;input&gt;</code>, and <code>&lt;button&gt;</code> elements to collect user information</li>
+            <li>Learning CSS (Cascading Style Sheets) to add colors, fonts, layouts, and visual design</li>
+            <li>Using JavaScript to add interactivity and dynamic behavior</li>
+        </ul>
+        <p>HTML is the foundation of all web development. By understanding these fundamentals, you're taking the first step toward creating sophisticated websites, web applications, and digital experiences. Practice by building your own projects, experiment with different elements, and gradually expand your skills. The web development journey begins with HTML, but the possibilities are endless.</p>
+    </section>
+</div>
+  `
+},
+
+{
+  id: 13,
+   image:"picture/Web Pages_css.png",
+  title: "Styling Web Pages with CSS: Adding Visual Design",
+  author: "GYUAN KIM",
+  date: "2025.11.31",
+  excerpt: "An overview of CSS and how it transforms plain HTML into polished, visually appealing web pages.",
+  content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+       <p>CSS (Cascading Style Sheets) is the design language of the web, transforming plain HTML structure into visually compelling, responsive, and user-friendly websites. While HTML provides the structural foundation and content, CSS controls all aspects of appearance—layout, colors, fonts, spacing, borders, shadows, animations, and responsive design that adapts to different screen sizes.</p>
+       <p>Without CSS, all websites would look like plain text documents with default browser styling—black text on white backgrounds with blue underlined links. CSS revolutionized web design by separating content (HTML) from presentation (CSS), allowing designers to create beautiful, consistent designs while keeping HTML clean and semantic. Modern CSS has evolved into a powerful system capable of creating complex layouts, smooth animations, and responsive designs that work seamlessly across devices from smartphones to large desktop monitors.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Understanding CSS Fundamentals</h2>
+            <h3>How CSS works with HTML</h3>
+        </div>
+        <p>CSS uses selectors to target HTML elements and apply styling rules. A CSS rule consists of a selector (which elements to style) and a declaration block (what styles to apply). For example:</p>
+        <p><code>h1 { color: blue; font-size: 24px; }</code></p>
+        <p>This rule selects all <code>&lt;h1&gt;</code> elements and makes their text blue with a 24-pixel font size. CSS can target elements by tag name, class (.<code>classname</code>), ID (#<code>idname</code>), or complex combinations for precise control.</p>
+        <p>The "cascading" in CSS refers to how styles are applied when multiple rules target the same element—more specific selectors override general ones, and styles can inherit from parent elements.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Example CSS Stylesheet</h2>
+        </div>
+        <p>Below is a comprehensive stylesheet demonstrating core CSS concepts for styling a personal webpage:</p>
+
+<div class="code-block">
+<pre><code>/* Global styles */
+body {
+  background-color: #f0f8ff;
+  font-family: Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 1200px;
+}
+
+/* Heading styles */
+h1 {
+  color: #0066cc;
+  text-align: center;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #0066cc;
+  padding-bottom: 10px;
+}
+
+h2 {
+  color: #0088cc;
+  font-size: 1.8em;
+  margin-top: 30px;
+}
+
+/* Paragraph styling */
+p {
+  font-size: 16px;
+  margin: 20px 0;
+  text-align: justify;
+}
+
+/* List styling */
+ul {
+  list-style-type: square;
+  padding-left: 40px;
+}
+
+li {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+/* Link styling */
+a {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #ff6600;
+  text-decoration: underline;
+}</code></pre>
+ <button class=\"copy-btn\" onclick=\"copyCode(this, 'body { background-color: #f0f8ff; font-family: Arial, sans-serif; color: #333; line-height: 1.6; margin: 0 auto; padding: 20px; max-width: 1200px; } ...')\">Copy</button>
+</div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Key CSS Concepts Explained</h2>
+        </div>
+        <div class="highlight-box">
+            <ul>
+                <li><strong>Color and Background:</strong> <code>color</code> controls text color, while <code>background-color</code> sets element backgrounds. Colors can be specified using names (red), hexadecimal codes (#FF0000), RGB values (rgb(255,0,0)), or HSL (hue, saturation, lightness).</li>
+                <li><strong>Typography:</strong> <code>font-family</code> specifies typefaces with fallback options, <code>font-size</code> controls text size (in px, em, rem, or %), and <code>line-height</code> adjusts spacing between lines for readability.</li>
+                <li><strong>Box Model:</strong> <code>margin</code> creates space outside elements, <code>padding</code> creates space inside, <code>border</code> adds boundaries, and <code>width</code>/<code>height</code> control dimensions. Understanding the box model is fundamental to CSS layout.</li>
+                <li><strong>Layout Control:</strong> <code>max-width</code> limits element width for readability, <code>margin: 0 auto</code> centers elements horizontally, and <code>text-align</code> aligns text within elements.</li>
+                <li><strong>Visual Effects:</strong> <code>border-bottom</code> adds decorative lines, <code>transition</code> creates smooth animations on property changes, and pseudo-classes like <code>:hover</code> apply styles on interaction.</li>
+                <li><strong>Responsive Units:</strong> Using relative units like <code>em</code> and <code>%</code> instead of fixed <code>px</code> values helps create flexible, responsive designs that adapt to different screen sizes.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Linking CSS to HTML</h2>
+        </div>
+        <p>There are three ways to apply CSS to HTML:</p>
+        <ul>
+            <li><strong>External stylesheet (recommended):</strong> Link a separate .css file in the HTML <code>&lt;head&gt;</code>:
+            <br><code>&lt;link rel="stylesheet" href="styles.css"&gt;</code>
+            <br>This method keeps content and styling separate, makes code maintainable, and allows one stylesheet to style multiple pages.</li>
+            <li><strong>Internal stylesheet:</strong> Place CSS inside <code>&lt;style&gt;</code> tags in the HTML <code>&lt;head&gt;</code>. Useful for single-page sites or page-specific styles.</li>
+            <li><strong>Inline styles:</strong> Apply styles directly to HTML elements using the <code>style</code> attribute. Not recommended as it mixes content with presentation and is harder to maintain.</li>
+        </ul>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Advanced CSS Techniques</h2>
+        </div>
+        <p>As you progress, you'll learn powerful CSS techniques:</p>
+        <ul>
+            <li><strong>Flexbox:</strong> A modern layout system for creating flexible, responsive layouts that automatically adapt to content and screen size.</li>
+            <li><strong>CSS Grid:</strong> A two-dimensional layout system for creating complex, grid-based page layouts with precise control.</li>
+            <li><strong>Media Queries:</strong> Apply different styles based on screen size, enabling responsive designs that work on all devices.</li>
+            <li><strong>Animations and Transitions:</strong> Create smooth, engaging visual effects that enhance user experience.</li>
+            <li><strong>CSS Variables:</strong> Define reusable values (like color schemes) that can be updated globally.</li>
+            <li><strong>Preprocessors:</strong> Tools like Sass and Less extend CSS with variables, nesting, and functions for more efficient styling.</li>
+        </ul>
+    </section>
+
+    <div class="highlight-box">
+        <p>CSS transforms simple HTML structure into visually appealing and user-friendly web pages. Mastering CSS enables you to create professional websites with consistent branding, intuitive layouts, and engaging visual designs. Modern web design relies heavily on CSS to create responsive, accessible, and aesthetically pleasing interfaces that work seamlessly across all devices and platforms. Combined with HTML and JavaScript, CSS forms the essential trinity of front-end web development, empowering you to bring your creative visions to life on the web.</p>
+    </div>
+</div>
+  `
+},
+
+{
+    id: 14,
+    image:"picture/generative AI in education.png",
+    title: "Generative AI: Transforming Education with Ethical Responsibility",
+    author: "GYUAN KIM",
+    date: "2025.12.01",
+    excerpt: "An examination of how generative AI is reshaping learning, teaching, and academic integrity.",
+    content: `
+<div class="divider"></div>
+<div class="container">
+    <section class="intro">
+        <p>Generative Artificial Intelligence (AI)—systems capable of creating new content such as text, images, code, music, and videos—represents one of the most transformative technologies in modern education. Tools like ChatGPT, DALL-E, GitHub Copilot, and other AI systems are fundamentally changing how students learn, how teachers teach, and how educational institutions operate.</p>
+        <p>This technology offers revolutionary opportunities for personalized learning and improved educational efficiency, potentially democratizing access to high-quality education worldwide. However, it simultaneously presents critical ethical challenges regarding fairness in assessment, data bias, academic integrity, and the fundamental nature of learning itself. Understanding both the promises and pitfalls of generative AI is essential for educators, students, policymakers, and technology developers as we navigate this transformative period in education.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Revolutionary Impacts on the Education Sector</h2>
+        </div>
+        
+        <h3>1. Maximized Personalized Learning Experiences</h3>
+        <p><strong>Impact:</strong> Generative AI can analyze a student's learning pace, comprehension level, preferred learning style, strengths, and weaknesses in real-time to instantly generate customized educational materials. For instance, it can provide practice problems of varying difficulty levels for a single concept, offer explanations from multiple perspectives (visual, auditory, kinesthetic), adapt content complexity based on performance, or even act as a virtual tutor available 24/7, suggesting an optimized learning path tailored to each individual's needs and goals.</p>
+        <p><strong>Educational Value:</strong> This helps to effectively address the limitations of standardized, one-size-fits-all education systems that fail to serve diverse learners. AI can provide reinforced foundations and additional practice for struggling students while offering advanced topics, enrichment materials, and accelerated pathways for high-achieving learners. This personalization extends beyond academics to accommodate different learning disabilities, language barriers, and cultural backgrounds, making quality education more accessible and inclusive.</p>
+
+        <h3>2. Redefining the Teacher's Role and Enhancing Operational Efficiency</h3>
+        <p><strong>Impact:</strong> Educators can leverage AI to automate repetitive and time-consuming administrative tasks such as generating exam questions, grading multiple-choice tests and even some essay questions, managing attendance records, handling basic administrative paperwork, creating lesson plan templates, and organizing course materials. This automation can save teachers significant time each week.</p>
+        <p><strong>Professional Growth:</strong> Freed from these burdensome administrative tasks, teachers can concentrate on the irreplaceable human-centric aspects of education: building emotional connections with students, providing personalized mentoring and guidance, facilitating high-level educational activities like fostering critical thinking skills, leading in-depth class discussions, developing creativity, teaching ethical reasoning, and providing the emotional support and motivation that AI cannot replicate. This shift allows teachers to focus on what they do best—inspiring, guiding, and developing the whole student.</p>
+    </section>
+
+    <section class="section">
+        <div class="section-header">
+            <h2>Ethical Dilemmas in the Age of Generative AI</h2>
+        </div>
+
+        <h3>1. Threat to Academic Integrity</h3>
+        <p><strong>Primary Concern:</strong> Students may submit AI-generated essays, reports, research papers, or programming code as their own original work, effectively bypassing the core learning process of self-analysis, research, synthesis, and critical thinking. This undermines the fundamental purpose of education—developing intellectual capabilities and understanding rather than merely producing output.</p>
+        <p><strong>The Challenge:</strong> Educational institutions must urgently establish clear, comprehensive guidelines for appropriate AI use while redesigning assessment methods. New evaluation approaches might include oral examinations where students explain their thinking process, in-depth discussions demonstrating deep understanding, practical performance-based evaluations completed under observation, collaborative projects emphasizing process over product, or portfolio assessments tracking intellectual development over time. The goal is measuring genuine, non-replaceable creative and critical thinking abilities that represent true learning rather than content production.</p>
+
+        <h3>2. Data Bias and the Need for Fairness</h3>
+        <p><strong>Primary Concern:</strong> If the datasets used to train AI models contain latent biases—reflecting historical inequities, stereotypes, or underrepresentation of certain groups—these biases may be reflected and amplified in the learning materials generated, evaluation results produced, or recommendations made. This could create an unfair or discriminatory educational environment for students from marginalized groups, perpetuating rather than reducing educational inequities. Furthermore, information presented as authoritative 'fact' by AI may not always be objective, accurate, or ethically neutral.</p>
+        <p><strong>Requirements:</strong> There is an urgent need for transparency (Explainability) allowing educators and students to understand and track the AI's decision-making process, and a commitment to fairness from the development stage to ensure biased data is identified, filtered, and prevented from impacting educational outcomes. This requires diverse development teams, inclusive training data, regular bias audits, and ongoing monitoring of AI systems for discriminatory patterns or outputs.</p>
+
+        <h3>3. Copyright and Plagiarism Risks</h3>
+        <p><strong>Primary Concern:</strong> When AI generates content by synthesizing patterns from its training data, it may produce outputs that closely resemble existing copyrighted works, potentially infringing upon the intellectual property and copyright of the original creators. In academic and research contexts, failure to properly attribute sources when using AI-generated content, or presenting AI output as original scholarship, significantly increases the risk of plagiarism and academic misconduct. This raises complex questions about authorship, originality, and intellectual property in the age of AI.</p>
+
+        <h3>4. Digital Divide and Access Inequality</h3>
+        <p><strong>Additional Concern:</strong> Access to advanced AI tools may not be equally distributed, potentially creating new forms of educational inequality where students with access to premium AI services gain significant advantages over those without. This could exacerbate existing socioeconomic divides in education quality and outcomes.</p>
+    </section>
+
+    <div class="highlight-box">
+        <p>Generative AI is undeniably a powerful tool with the potential to dramatically improve the quality, accessibility, and personalization of education worldwide. However, for this technology to be successfully and responsibly integrated into education, educators, AI developers, educational technology companies, and policymakers must collaborate urgently to establish a comprehensive ethical framework that prioritizes fairness, transparency, accountability, and the preservation of genuine student learning value.</p>
+        <p>The goal should not be replacing human teachers or eliminating intellectual struggle—which is essential for deep learning—but rather augmenting and enhancing the educational experience while maintaining the irreplaceable human elements of teaching: empathy, inspiration, ethical guidance, and the cultivation of wisdom alongside knowledge. By thoughtfully navigating these challenges, we can harness AI's potential while preserving and strengthening what makes education transformative: the development of critical thinking, creativity, ethical reasoning, and the capacity for lifelong learning.</p>
+    </div>
+</div>
+   `
+},
+
+];
+
+        // Calculate total pages
+        function getTotalPages() {
+            return Math.ceil(blogPosts.length / postsPerPage);
+        }
+
+        // Get posts for current page
+        function getPaginatedPosts() {
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            return blogPosts.slice(startIndex, endIndex);
+        }
+
+        // Render blog posts
+        function renderBlogPosts() {
+            const grid = document.getElementById('blogGrid');
+            const paginatedPosts = getPaginatedPosts();
+            
+             grid.innerHTML = paginatedPosts.map(post => `
+                <div class="blog-card" onclick="openPost(${post.id})">
+                    <div class="blog-image">
+                        ${post.image 
+                            ? `<img src="${post.image}" alt="${post.title}" style="width:100%; height:180px;"  onerror="this.parentElement.innerHTML='<span class=\\'icon\\'>${post.icon}</span>'">`
+                            : `<span class="icon">${post.icon}</span>`
+                        }
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date">${post.date}</div>
+                        <h3 class="blog-title">${post.title}</h3>
+                        <p class="blog-excerpt">${post.excerpt}</p>
+                        <div class="blog-author">👤 ${post.author}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            renderPagination();
+        }
+
+        // Render pagination buttons
+        function renderPagination() {
+            const totalPages = getTotalPages();
+            const paginationContainer = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // Previous button
+            html += `
+                <button class="page-btn" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    ← Previous
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `
+                        <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="page-dots">...</span>`;
+                }
+            }
+
+            // Next button
+            html += `
+                <button class="page-btn" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Next →
+                </button>
+            `;
+
+            paginationContainer.innerHTML = html;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            const totalPages = getTotalPages();
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            renderBlogPosts();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+       // Open post detail
+    function openPost(id) {
+        const post = blogPosts.find(p => p.id === id);
+        if (!post) return;
+
+        document.getElementById('modalTitle').textContent = post.title;
+        document.getElementById('modalDate').textContent = post.date;
+        document.getElementById('modalAuthor').textContent = '작성자: ' + post.author;
+
+        const modalImage = document.getElementById('modalImage');
+        if (post.image) {
+          modalImage.innerHTML = `<img src="${post.image}" alt="${post.title}" style=" width: 100%;height: 600px;" onerror="this.parentElement.innerHTML='<span class=\\'icon\\'>${post.icon}</span>'">`;
+         } else {
+        modalImage.innerHTML = `<span class="icon">${post.icon}</span>`;
+         }
+
+        // content를 그대로 innerHTML로 처리
+         document.getElementById('modalContent').innerHTML = post.content;
+
+        document.getElementById('readModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+        }
+
+        // Close read modal
+        function closeReadModal() {
+            document.getElementById('readModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+
+        // Open profile modal
+        function openProfileModal() {
+            document.getElementById('profileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close profile modal
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        function closeModal(event, modalId) {
+            if (event.target.classList.contains('modal')) {
+                document.getElementById(modalId).classList.remove('active');
+                document.body.style.overflow = 'auto';
+                if (modalId === 'writeModal') {
+                    document.getElementById('writeForm').reset();
+                }
+            }
+        }
+
+        
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeReadModal();
+                closeWriteModal();
+                closeProfileModal();
+            }
+        });
+
+        renderBlogPosts();
+
+
+// test code block
+function copyCode(button, text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.textContent;
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('copied');
+        }, 2000);
+    }).catch(err => {
+        console.error('Copy failed:', err);
+        alert('Failed to copy.');
+    });
+}
+    </script>
+</body>
+</html>
