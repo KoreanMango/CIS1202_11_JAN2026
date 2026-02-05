@@ -1,4 +1,4 @@
- Student Reflective AI Note
+# Student Reflective AI Note
 
 **Course:** CIS 1202 - Web Development I  
 **Week No / Task:** Week 2: Semantic Scaffolding  
@@ -6,5 +6,5 @@
 
 ---
 ## Section 1: The Interaction Log (The "How")
-**AI Tool Used:** Gemini 3 Flash (Paid Tier)
+**AI Tool Used:** Gemini 3 Flsash (Paid Tier)
 **Primary Prompt:**
