@@ -1,0 +1,351 @@
+/* ===========================
+   CSS VARIABLES (Color Scheme)
+   ===========================
+   Using CSS variables for a consistent "Source of Truth" regarding colors.
+   This allows for easy theme management and global updates.
+*/
+:root {
+    --primary-color: #1a1a2e;
+    --accent-color: #e94560;
+    --background-color: #f5f5f5;
+    --text-color: #333333;
+    --card-bg: #ffffff;
+    --nav-bg: #1a1a2e;
+    --footer-bg: #1a1a2e;
+    --border-radius: 8px;
+    --transition: 0.3s ease;
+    --font-heading: 'Georgia', serif;
+    --font-body: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===========================
+   DARK MODE THEME
+   Implementing Dark Mode using class-based variable overriding.
+*/
+body.dark-mode {
+    --background-color: #0f0f1a;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e30;
+    --nav-bg: #0a0a15;
+    --footer-bg: #0a0a15;
+    --primary-color: #e94560;
+}
+
+/* ===========================
+   RESET & BASE STYLES
+   Applying box-sizing: border-box ensures padding and borders
+   are included in the element's total width and height.
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color var(--transition), color var(--transition);
+    line-height: 1.7;
+}
+
+/* ===========================
+   TYPOGRAPHY
+   =========================== */
+h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    color: var(--primary-color);
+    border-left: 4px solid var(--accent-color);
+    padding-left: 12px;
+    margin-bottom: 16px;
+    transition: color var(--transition);
+}
+
+body.dark-mode h2 {
+    color: var(--accent-color);
+}
+
+h3 {
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    margin: 20px 0 8px;
+}
+
+p {
+    margin-bottom: 12px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 40px 0;
+}
+
+body.dark-mode hr {
+    border-color: #333;
+}
+
+/* ===========================
+   HEADER & NAV (Flexbox)
+   =========================== */
+header {
+    background-color: var(--nav-bg);
+    color: white;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+header h1 {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+}
+
+/* BOX MODEL NOTE:
+   Padding creates internal space between the link text and its border.
+   'gap' on the flex container manages external spacing between items
+   without needing messy margins on each item.
+*/
+nav ul {
+    list-style-type: none;  /* Challenge 1: Remove bullets */
+    display: flex;
+    gap: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;  /* Challenge 1: Remove underlines */
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition);
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+nav ul li a:hover {
+    background-color: var(--accent-color);
+}
+
+/* ===========================
+   DARK MODE TOGGLE BUTTON
+   =========================== */
+#dark-mode-btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: opacity var(--transition);
+    white-space: nowrap;
+}
+
+#dark-mode-btn:hover {
+    opacity: 0.85;
+}
+
+/* ===========================
+   MAIN CONTENT
+   =========================== */
+main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+section, article {
+    margin-bottom: 48px;
+}
+
+/* ===========================
+   HERO SECTION & AVATAR
+   =========================== */
+#home {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+/* Challenge 2: Circular Avatar
+   For a perfect circle, the element must have a 1:1 aspect ratio.
+   'object-fit: cover' prevents the image from being squashed or stretched.
+*/
+#home figure img {
+    width: 180px;
+    height: 180px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--accent-color);
+    display: block;
+    margin: 24px auto 12px;
+    box-shadow: 0 4px 20px rgba(233, 69, 96, 0.3);
+    transition: transform var(--transition);
+}
+
+#home figure img:hover {
+    transform: scale(1.05);
+}
+
+#home figcaption {
+    font-style: italic;
+    color: #888;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+/* ===========================
+   ABOUT SECTION
+   =========================== */
+#about ul {
+    list-style-type: disc;
+    padding-left: 24px;
+    margin-bottom: 12px;
+}
+
+/* ===========================
+   CHALLENGE 3: TABBED SKILLS
+   ===========================
+   Using 'display: none' to hide inactive content.
+   DIFFERENCE:
+   - 'display: none'       -> removes element from layout entirely (no blank gap)
+   - 'visibility: hidden'  -> hides element but keeps its space in the layout
+*/
+.skills-tab-container {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.tab-btn {
+    padding: 8px 20px;
+    border: 2px solid var(--accent-color);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--accent-color);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.tab-btn.active,
+.tab-btn:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.tab-content {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: background-color var(--transition);
+}
+
+#soft-skills {
+    display: none; /* Hidden by default */
+}
+
+.active-tab {
+    display: block !important;
+}
+
+/* ===========================
+   PROJECTS SECTION (CSS Grid)
+   ===========================
+   Using CSS Grid for a responsive 2D layout that adapts to screen size.
+*/
+#projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.project-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-top: 3px solid var(--accent-color);
+    transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition);
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 8px 20px;
+    background-color: var(--accent-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: opacity var(--transition);
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+footer {
+    background-color: var(--footer-bg);
+    color: #ccc;
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 50px;
+    transition: background-color var(--transition);
+}
+
+footer h2 {
+    color: var(--accent-color);
+    border: none;
+    padding: 0;
+    margin-bottom: 12px;
+}
+
+footer address {
+    font-style: normal;
+    margin-bottom: 16px;
+    line-height: 2;
+}
+
+footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+footer p {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+}
