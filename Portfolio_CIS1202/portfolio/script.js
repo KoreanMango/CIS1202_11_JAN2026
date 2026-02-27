@@ -15,3 +15,14 @@ btn.addEventListener('click', function () {
         btn.textContent = '🌙 Dark Mode';
     }
 });
+
+function showTab(tabId, activeBtn) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+    });
+    document.getElementById(tabId).style.display = 'block';
+    activeBtn.classList.add('active');
+}

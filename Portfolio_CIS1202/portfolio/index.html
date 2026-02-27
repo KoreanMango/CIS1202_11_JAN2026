@@ -45,6 +45,21 @@
 
             <h3>Core Technologies</h3>
             <p>Current Tech Stack: Python, HTML/CSS/JavaScript, Django, and PostgreSQL.</p>
+
+            <!-- tab challenge -->
+            <h3>Skills</h3>
+            <div class="skills-tab-container">
+                <div class="tab-buttons">
+                  <button class="tab-btn active" onclick="showTab('tech-skills', this)">Technical Skills</button>
+                    <button class="tab-btn" onclick="showTab('soft-skills', this)">Non-Technical Skills</button>
+                </div>
+                <div id="tech-skills" class="tab-content">
+                    <p>Python, HTML/CSS/JavaScript, Django, PostgreSQL</p>
+                </div>
+                <div id="soft-skills" class="tab-content" style="display:none">
+                    <p>Project Management, Problem Solving, Communication</p>
+                </div>
+            </div>
         </article>
 
 <hr>
