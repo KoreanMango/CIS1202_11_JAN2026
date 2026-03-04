@@ -118,9 +118,9 @@ header h1 {
    without needing messy margins on each item.
 */
 nav ul {
-    list-style-type: none;  /* Challenge 1: Remove bullets */
-    display: flex;
-    gap: 20px;
+    list-style-type:none;  /*    Challenge 1: Remove bullets    */
+    display:flex;
+    gap:20px;
 }
 
 nav ul li a {
