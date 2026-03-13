@@ -64,6 +64,10 @@ async function runDirectionCycle(activeDirection, waitingDirection, name) {
 
   // Simplified duplicated logic
   setIntersectionState("RED", "RED"); 
+  
+  addLog("Safety Buffer: ALL-RED for 1s");
+  await sleep(1000);
+  
   addLog(`${name} transition complete: RED`);
 
   if (waitingDirection.phase !== "RED") {
