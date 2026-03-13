@@ -113,6 +113,15 @@ function stopSystem() {
   addLog("Stop requested. Waiting for current phase to finish.");
 }
 
+// Manually implemented by student: Clears the status log list
+function clearLog() {
+  trafficSystem.logListEl.innerHTML = "";
+  addLog("Log cleared by user.");
+}
+
+
+
+
 // Used querySelector instead of getElementById
 function bindDomReferences() {
   trafficSystem.northSouth.redEl = document.querySelector("#nsRed");
@@ -131,6 +140,7 @@ function bindDomReferences() {
   // Replaced inline onclick with modern addEventListener
   document.querySelector("#startBtn").addEventListener("click", startSystem);
   document.querySelector("#stopBtn").addEventListener("click", stopSystem);
+  document.querySelector("#clearLogBtn").addEventListener("click", clearLog);
 }
 
 function initializeSystem() {

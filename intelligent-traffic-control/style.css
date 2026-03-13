@@ -238,3 +238,17 @@ button:hover {
     overflow-y: auto;
   }
 }
+
+
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ddd !important;
+  margin-top: 8px;
+  font-size: 0.8rem !important;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
+}
