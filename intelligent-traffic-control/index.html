@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intelligent Traffic Control Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar glass-panel">
+      <div>
+        <h1>Intelligent Traffic Control Dashboard</h1>
+        <p>Desktop Simulation • Glassmorphism Interface</p>
+      </div>
+      <div class="system-pill" id="systemStatePill">Initializing...</div>
+    </header>
+
+    <main class="dashboard-grid">
+      <section class="simulation glass-panel" aria-label="Visual Simulation">
+        <h2>Visual Simulation</h2>
+
+        <div class="intersection">
+          <div class="road road-vertical"></div>
+          <div class="road road-horizontal"></div>
+
+          <div class="junction-card north-south-card">
+            <h3>North-South</h3>
+            <div class="light-stack" id="northSouthLights">
+              <div class="light red" id="nsRed"></div>
+              <div class="light yellow" id="nsYellow"></div>
+              <div class="light green" id="nsGreen"></div>
+            </div>
+            <p class="phase-text" id="nsPhaseText">Current: RED</p>
+          </div>
+
+          <div class="junction-card east-west-card">
+            <h3>East-West</h3>
+            <div class="light-stack" id="eastWestLights">
+              <div class="light red" id="ewRed"></div>
+              <div class="light yellow" id="ewYellow"></div>
+              <div class="light green" id="ewGreen"></div>
+            </div>
+            <p class="phase-text" id="ewPhaseText">Current: RED</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="status-log glass-panel" aria-label="Status Log">
+        <h2>Status Log</h2>
+        <div class="controls">
+          <button id="startBtn">Start Cycle</button>
+          <button id="stopBtn">Stop Cycle</button>
+        </div>
+        <ul id="logList"></ul>
+      </aside>
+    </main>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
