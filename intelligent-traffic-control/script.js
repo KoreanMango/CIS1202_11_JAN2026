@@ -1,7 +1,7 @@
 const trafficSystem = {
   northSouth: { phase: "RED", redEl: null, yellowEl: null, greenEl: null, textEl: null },
   eastWest: { phase: "GREEN", redEl: null, yellowEl: null, greenEl: null, textEl: null },
-  durations: { green: 6000, yellow: 3000 },
+  durations: { green: 3000, yellow: 1500 },
   isRunning: false,
   stopRequested: false,
   cycleCounter: 0,
@@ -57,7 +57,7 @@ async function runDirectionCycle(activeDirection, waitingDirection, name) {
     activeDirection === trafficSystem.northSouth ? "YELLOW" : "RED",
     activeDirection === trafficSystem.eastWest ? "YELLOW" : "RED"
   );
-  addLog(`${name} transition: YELLOW for 3s`);
+  addLog(`${name} transition: YELLOW for 1.5s`);
   await sleep(trafficSystem.durations.yellow);
 
   if (trafficSystem.stopRequested) return;
@@ -65,8 +65,8 @@ async function runDirectionCycle(activeDirection, waitingDirection, name) {
   // Simplified duplicated logic
   setIntersectionState("RED", "RED"); 
   
-  addLog("Safety Buffer: ALL-RED for 1s");
-  await sleep(1000);
+  addLog("Safety Buffer: ALL-RED for 0.5s");
+  await sleep(500);
   
   addLog(`${name} transition complete: RED`);
 
