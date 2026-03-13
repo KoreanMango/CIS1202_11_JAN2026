@@ -217,3 +217,24 @@ button:hover {
   color: #cbd5e1;
   font-size: 0.84rem;
 }
+
+
+/* --- For Mobile Screens --- */
+@media (max-width: 768px) {
+  /* Put boxes in one straight line (top and bottom) */
+  .dashboard-grid { 
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+  
+  /* Make the outside space smaller */
+  body {
+    padding: 10px;
+  }
+
+  /* Keep the log box small and add a scrollbar */
+  .status-log {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+}
