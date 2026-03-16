@@ -185,6 +185,10 @@ body {
   margin-bottom: 14px;
 }
 
+.controls button {
+  flex: 1;
+}
+
 button {
   border: 1px solid rgba(148, 163, 184, 0.6);
   background: rgba(30, 41, 59, 0.7);
@@ -242,13 +246,5 @@ button:hover {
 
 
 .secondary-btn {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: #ddd !important;
-  margin-top: 8px;
-  font-size: 0.8rem !important;
-}
-
-.secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
-  color: #fff !important;
+  margin-top: 0;
 }

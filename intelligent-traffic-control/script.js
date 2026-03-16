@@ -151,3 +151,48 @@ function initializeSystem() {
 }
 
 document.addEventListener("DOMContentLoaded", initializeSystem);
+
+
+// === Pedestrian Crossing Add-on (Modified) ===
+(function() {
+    const controlsPanel = document.querySelector('.controls-panel') || document.querySelector('.controls');
+    if (!controlsPanel) return;
+
+    const pedButton = document.createElement('button');
+    pedButton.id = "pedBtn";
+    pedButton.textContent = 'Pedestrian Crossing';
+    pedButton.className = "action-btn"; 
+    controlsPanel.appendChild(pedButton);
+
+    let isPedestrianQueued = false;
+
+    pedButton.addEventListener('click', () => {
+        if (!isPedestrianQueued) {
+            isPedestrianQueued = true;
+            pedButton.disabled = true;
+            pedButton.textContent = '⏳ Queued...';
+            
+           
+            stopSystem(); 
+            addLog('Pedestrian requested: System will pause after current cycle.');
+        }
+    });
+
+    const monitor = setInterval(async () => {
+        if (isPedestrianQueued && trafficSystem.isRunning === false) {
+            isPedestrianQueued = false;
+            pedButton.textContent = '🚶 Crossing...';
+
+            setIntersectionState("RED", "RED");
+            addLog('PEDESTRIAN PHASE: All lights RED for 5 seconds.');
+
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            addLog('Pedestrian phase complete. Resuming traffic...');
+            
+            pedButton.disabled = false;
+            pedButton.textContent = '🚶 Pedestrian Crossing';
+            startSystem();
+        }
+    }, 500); 
+})();
