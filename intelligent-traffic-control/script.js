@@ -1,7 +1,31 @@
 const trafficSystem = {
-  northSouth: { phase: "RED", redEl: null, yellowEl: null, greenEl: null, textEl: null },
-  eastWest: { phase: "GREEN", redEl: null, yellowEl: null, greenEl: null, textEl: null },
-  durations: { green: 3000, yellow: 1500, allRed: 500 },
+  northSouth: {
+    phase: "RED",
+    redEl: null,
+    yellowEl: null,
+    greenEl: null,
+    textEl: null,
+    countdownEl: null,
+    timerCardEl: null,
+    timerBadgeEl: null,
+    timerActionEl: null,
+    timerValueEl: null,
+    timerSubEl: null
+  },
+  eastWest: {
+    phase: "GREEN",
+    redEl: null,
+    yellowEl: null,
+    greenEl: null,
+    textEl: null,
+    countdownEl: null,
+    timerCardEl: null,
+    timerBadgeEl: null,
+    timerActionEl: null,
+    timerValueEl: null,
+    timerSubEl: null
+  },
+  durations: { green: 8000, yellow: 1500, allRed: 500 },
   mode: "manual",
   timedSettings: { nsGreenSec: 10, ewGreenSec: 7 },
   isRunning: false,
@@ -15,6 +39,11 @@ const trafficSystem = {
   ewDurationInputEl: null,
   pedIndicatorEl: null,
   pedHintEl: null,
+  pedTimerCardEl: null,
+  pedTimerBadgeEl: null,
+  pedTimerActionEl: null,
+  pedTimerValueEl: null,
+  pedTimerSubEl: null,
   isPedestrianQueued: false,
   isPedestrianCrossing: false
 };
@@ -47,6 +76,55 @@ function updateSystemPill(text) {
   trafficSystem.systemStateEl.innerText = text;
 }
 
+function setCountdownTexts(nsText, ewText) {
+  if (trafficSystem.northSouth.countdownEl) {
+    trafficSystem.northSouth.countdownEl.innerText = nsText;
+  }
+  if (trafficSystem.eastWest.countdownEl) {
+    trafficSystem.eastWest.countdownEl.innerText = ewText;
+  }
+}
+
+function setDirectionTimer(directionObj, state, badge, action, seconds, subtitle) {
+  if (!directionObj.timerCardEl) return;
+
+  directionObj.timerCardEl.dataset.state = state;
+  directionObj.timerBadgeEl.innerText = badge;
+  directionObj.timerActionEl.innerText = action;
+  directionObj.timerValueEl.innerText = Number.isFinite(seconds) ? String(seconds) : "--";
+  directionObj.timerSubEl.innerText = subtitle;
+}
+
+function setPedTimer(state, badge, action, seconds, subtitle) {
+  if (!trafficSystem.pedTimerCardEl) return;
+
+  trafficSystem.pedTimerCardEl.dataset.state = state;
+  trafficSystem.pedTimerBadgeEl.innerText = badge;
+  trafficSystem.pedTimerActionEl.innerText = action;
+  trafficSystem.pedTimerValueEl.innerText = Number.isFinite(seconds) ? String(seconds) : "--";
+  trafficSystem.pedTimerSubEl.innerText = subtitle;
+}
+
+async function waitWithCountdown(durationMs, onTick) {
+  const endAt = Date.now() + durationMs;
+  let lastSecond = -1;
+
+  while (true) {
+    const remainingMs = endAt - Date.now();
+    if (remainingMs <= 0) break;
+
+    const secondsLeft = Math.ceil(remainingMs / 1000);
+    if (secondsLeft !== lastSecond) {
+      if (onTick) {
+        onTick(secondsLeft);
+      }
+      lastSecond = secondsLeft;
+    }
+
+    await sleep(Math.min(200, remainingMs));
+  }
+}
+
 function setPedestrianState(state) {
   if (!trafficSystem.pedIndicatorEl || !trafficSystem.pedHintEl) return;
 
@@ -62,7 +140,7 @@ function setPedestrianState(state) {
   if (state === "wait") {
     trafficSystem.pedIndicatorEl.classList.add("wait");
     trafficSystem.pedIndicatorEl.innerText = "WAIT";
-    trafficSystem.pedHintEl.innerText = "Request queued. Please wait for all-red.";
+    trafficSystem.pedHintEl.innerText = "Request queued. Please wait for E-W green.";
     return;
   }
 
@@ -76,9 +154,6 @@ function setIntersectionState(nsPhase, ewPhase) {
   applyPhase(trafficSystem.eastWest, ewPhase);
   addLog(`North-South ${nsPhase} | East-West ${ewPhase}`);
 
-  if (!trafficSystem.isPedestrianQueued && !trafficSystem.isPedestrianCrossing) {
-    setPedestrianState("stop");
-  }
 }
 
 function clampDuration(value, fallback) {
@@ -135,35 +210,119 @@ function updateTimedDuration(direction) {
   addLog(`Updated E-W GO time to ${value}s.`);
 }
 
+function getDisplayedSeconds(directionObj) {
+  if (!directionObj || !directionObj.timerValueEl) return null;
+  const value = Number(directionObj.timerValueEl.innerText);
+  return Number.isFinite(value) ? value : null;
+}
+
+function getSecondsUntilPedWalk() {
+  const nsPhase = trafficSystem.northSouth.phase;
+  const ewPhase = trafficSystem.eastWest.phase;
+  const nsTotalSec = Math.ceil(getGreenDurationMs(true) / 1000);
+  const nsRemain = getDisplayedSeconds(trafficSystem.northSouth) ?? nsTotalSec;
+  const ewRemain = getDisplayedSeconds(trafficSystem.eastWest) ?? Math.ceil(getGreenDurationMs(false) / 1000);
+
+  // Pedestrian GO only when EW=GREEN and NS=RED.
+  if (ewPhase === "GREEN" && nsPhase === "RED") return 0;
+
+  // NS active (EW red): wait current NS cycle remainder.
+  if (nsPhase === "GREEN" && ewPhase === "RED") return nsRemain;
+
+  // Transition right before EW turn.
+  if (nsPhase === "YELLOW" && ewPhase === "YELLOW") return nsRemain;
+
+  // EW transition means NS turn is next; then must wait full NS cycle.
+  if (ewPhase === "YELLOW") return ewRemain + nsTotalSec;
+
+  return nsTotalSec;
+}
+
 async function runDirectionCycle(activeDirection, waitingDirection, name) {
   const isNorthSouthDirection = activeDirection === trafficSystem.northSouth;
-  const greenDurationMs = getGreenDurationMs(isNorthSouthDirection);
+  const totalSec = Math.ceil(getGreenDurationMs(isNorthSouthDirection) / 1000);
+  const yellowWindowSec = Math.min(2, Math.max(1, totalSec - 1));
 
-  setIntersectionState(
-    isNorthSouthDirection ? "GREEN" : "RED",
-    isNorthSouthDirection ? "RED" : "GREEN"
-  );
-  addLog(`${name} active: GREEN phase (${Math.round(greenDurationMs / 1000)}s)`);
-  await sleep(greenDurationMs);
+  addLog(`${name} cycle: ${totalSec}s (GREEN ${Math.max(1, totalSec - yellowWindowSec)}s + YELLOW ${yellowWindowSec}s)`);
+
+  await waitWithCountdown(totalSec * 1000, (secondsLeft) => {
+    const isYellowWindow = secondsLeft <= yellowWindowSec;
+    const activePhase = isYellowWindow ? "YELLOW" : "GREEN";
+    const waitingPhase = isYellowWindow ? "YELLOW" : "RED";
+
+    setIntersectionState(
+      isNorthSouthDirection ? activePhase : waitingPhase,
+      isNorthSouthDirection ? waitingPhase : activePhase
+    );
+
+    if (isNorthSouthDirection) {
+      setDirectionTimer(
+        trafficSystem.northSouth,
+        isYellowWindow ? "yellow" : "green",
+        isYellowWindow ? "YELLOW" : "GREEN",
+        isYellowWindow ? "Wait" : "Go",
+        secondsLeft,
+        isYellowWindow ? "CHANGE IMMINENT" : "GREEN TIME LEFT"
+      );
+      setDirectionTimer(
+        trafficSystem.eastWest,
+        isYellowWindow ? "yellow" : "red",
+        isYellowWindow ? "YELLOW" : "RED",
+        isYellowWindow ? "Wait" : "Stop",
+        secondsLeft,
+        isYellowWindow ? "CHANGE IMMINENT" : "UNTIL GREEN"
+      );
+      setCountdownTexts(`Next change in: ${secondsLeft}s`, `Next change in: ${secondsLeft}s`);
+
+      if (trafficSystem.isPedestrianQueued) {
+        setPedestrianState("wait");
+        setPedTimer("yellow", "WAIT", "Wait", secondsLeft, "WAITING FOR E-W GREEN");
+      } else {
+        setPedestrianState("stop");
+        setPedTimer("red", "DON'T WALK", "Stop", null, "PRESS BUTTON TO REQUEST");
+      }
+      trafficSystem.isPedestrianCrossing = false;
+    } else {
+      setDirectionTimer(
+        trafficSystem.eastWest,
+        isYellowWindow ? "yellow" : "green",
+        isYellowWindow ? "YELLOW" : "GREEN",
+        isYellowWindow ? "Wait" : "Go",
+        secondsLeft,
+        isYellowWindow ? "CHANGE IMMINENT" : "GREEN TIME LEFT"
+      );
+      setDirectionTimer(
+        trafficSystem.northSouth,
+        isYellowWindow ? "yellow" : "red",
+        isYellowWindow ? "YELLOW" : "RED",
+        isYellowWindow ? "Wait" : "Stop",
+        secondsLeft,
+        isYellowWindow ? "CHANGE IMMINENT" : "UNTIL GREEN"
+      );
+      setCountdownTexts(`Next change in: ${secondsLeft}s`, `Next change in: ${secondsLeft}s`);
+
+      if (!isYellowWindow && (trafficSystem.isPedestrianQueued || trafficSystem.isPedestrianCrossing)) {
+        trafficSystem.isPedestrianCrossing = true;
+        setPedestrianState("walk");
+        setPedTimer("green", "WALK", "Go", secondsLeft, "E-W GREEN ACTIVE");
+        if (trafficSystem.isPedestrianQueued) {
+          trafficSystem.isPedestrianQueued = false;
+          addLog("Pedestrian request served on E-W GREEN.");
+        }
+      } else if (trafficSystem.isPedestrianQueued) {
+        setPedestrianState("wait");
+        setPedTimer("yellow", "WAIT", "Wait", secondsLeft, "SIGNAL TRANSITION");
+        trafficSystem.isPedestrianCrossing = false;
+      } else {
+        setPedestrianState("stop");
+        setPedTimer("red", "DON'T WALK", "Stop", null, "PRESS BUTTON TO REQUEST");
+        trafficSystem.isPedestrianCrossing = false;
+      }
+    }
+  });
 
   if (trafficSystem.stopRequested) return;
-
-  setIntersectionState(
-    isNorthSouthDirection ? "YELLOW" : "RED",
-    isNorthSouthDirection ? "RED" : "YELLOW"
-  );
-  addLog(`${name} transition: YELLOW for 1.5s`);
-  await sleep(trafficSystem.durations.yellow);
-
-  if (trafficSystem.stopRequested) return;
-
-  // Simplified duplicated logic
-  setIntersectionState("RED", "RED"); 
-  
-  addLog("Safety Buffer: ALL-RED for 0.5s");
-  await sleep(trafficSystem.durations.allRed);
-  
-  addLog(`${name} transition complete: RED`);
+  addLog(`${name} transition complete`);
 
   if (waitingDirection.phase !== "RED") {
     applyPhase(waitingDirection, "RED");
@@ -175,15 +334,21 @@ async function runTrafficLoop() {
     trafficSystem.cycleCounter += 1;
     updateSystemPill(`Running • Cycle ${trafficSystem.cycleCounter}`);
 
-    await runDirectionCycle(trafficSystem.northSouth, trafficSystem.eastWest, "North-South");
+    await runDirectionCycle(trafficSystem.eastWest, trafficSystem.northSouth, "East-West");
     if (trafficSystem.stopRequested) break;
     
-    await runDirectionCycle(trafficSystem.eastWest, trafficSystem.northSouth, "East-West");
+    await runDirectionCycle(trafficSystem.northSouth, trafficSystem.eastWest, "North-South");
   }
 
   trafficSystem.isRunning = false;
   trafficSystem.stopRequested = false;
   updateSystemPill("Stopped");
+  setCountdownTexts("Next change in: --", "Next change in: --");
+  setDirectionTimer(trafficSystem.northSouth, "red", "RED", "Stop", null, "PAUSED");
+  setDirectionTimer(trafficSystem.eastWest, "red", "RED", "Stop", null, "PAUSED");
+  if (!trafficSystem.isPedestrianQueued && !trafficSystem.isPedestrianCrossing) {
+    setPedTimer("red", "DON'T WALK", "Stop", null, "PRESS BUTTON TO REQUEST");
+  }
   addLog("System stopped.");
 }
 
@@ -231,11 +396,23 @@ function bindDomReferences() {
   trafficSystem.northSouth.yellowEl = document.querySelector("#nsYellow");
   trafficSystem.northSouth.greenEl = document.querySelector("#nsGreen");
   trafficSystem.northSouth.textEl = document.querySelector("#nsPhaseText");
+  trafficSystem.northSouth.countdownEl = document.querySelector("#nsCountdownText");
+  trafficSystem.northSouth.timerCardEl = document.querySelector("#nsTimerCard");
+  trafficSystem.northSouth.timerBadgeEl = document.querySelector("#nsTimerBadge");
+  trafficSystem.northSouth.timerActionEl = document.querySelector("#nsTimerAction");
+  trafficSystem.northSouth.timerValueEl = document.querySelector("#nsTimerValue");
+  trafficSystem.northSouth.timerSubEl = document.querySelector("#nsTimerSub");
 
   trafficSystem.eastWest.redEl = document.querySelector("#ewRed");
   trafficSystem.eastWest.yellowEl = document.querySelector("#ewYellow");
   trafficSystem.eastWest.greenEl = document.querySelector("#ewGreen");
   trafficSystem.eastWest.textEl = document.querySelector("#ewPhaseText");
+  trafficSystem.eastWest.countdownEl = document.querySelector("#ewCountdownText");
+  trafficSystem.eastWest.timerCardEl = document.querySelector("#ewTimerCard");
+  trafficSystem.eastWest.timerBadgeEl = document.querySelector("#ewTimerBadge");
+  trafficSystem.eastWest.timerActionEl = document.querySelector("#ewTimerAction");
+  trafficSystem.eastWest.timerValueEl = document.querySelector("#ewTimerValue");
+  trafficSystem.eastWest.timerSubEl = document.querySelector("#ewTimerSub");
 
   trafficSystem.logListEl = document.querySelector("#logList");
   trafficSystem.systemStateEl = document.querySelector("#systemStatePill");
@@ -245,6 +422,11 @@ function bindDomReferences() {
   trafficSystem.ewDurationInputEl = document.querySelector("#ewDurationInput");
   trafficSystem.pedIndicatorEl = document.querySelector("#pedIndicator");
   trafficSystem.pedHintEl = document.querySelector("#pedHintText");
+  trafficSystem.pedTimerCardEl = document.querySelector("#pedTimerCard");
+  trafficSystem.pedTimerBadgeEl = document.querySelector("#pedTimerBadge");
+  trafficSystem.pedTimerActionEl = document.querySelector("#pedTimerAction");
+  trafficSystem.pedTimerValueEl = document.querySelector("#pedTimerValue");
+  trafficSystem.pedTimerSubEl = document.querySelector("#pedTimerSub");
 
   // Replaced inline onclick with modern addEventListener
   document.querySelector("#startBtn").addEventListener("click", startSystem);
@@ -263,9 +445,13 @@ function initializeSystem() {
   bindDomReferences();
   syncModeUi();
   setPedestrianState("stop");
+  setCountdownTexts("Next change in: --", "Next change in: --");
+  setDirectionTimer(trafficSystem.northSouth, "red", "RED", "Stop", null, "UNTIL GREEN");
+  setDirectionTimer(trafficSystem.eastWest, "green", "GREEN", "Go", null, "GREEN TIME LEFT");
+  setPedTimer("red", "DON'T WALK", "Stop", null, "PRESS BUTTON TO REQUEST");
   setIntersectionState("RED", "GREEN");
   updateSystemPill("Ready");
-  addLog("Initialized with East-West GREEN.");
+  addLog("Initialized with East-West GREEN (East-West priority).");
 }
 
 document.addEventListener("DOMContentLoaded", initializeSystem);
@@ -284,36 +470,31 @@ document.addEventListener("DOMContentLoaded", initializeSystem);
 
     pedButton.addEventListener('click', () => {
       if (!trafficSystem.isPedestrianQueued) {
+        const isEwGreenNow = trafficSystem.eastWest.phase === "GREEN" && trafficSystem.northSouth.phase === "RED";
+
+        if (isEwGreenNow) {
+          const ewRemaining = getDisplayedSeconds(trafficSystem.eastWest) ?? Math.ceil(getGreenDurationMs(false) / 1000);
+          trafficSystem.isPedestrianCrossing = true;
+          setPedestrianState("walk");
+          setPedTimer("green", "WALK", "Go", ewRemaining, "E-W GREEN ACTIVE");
+          addLog('Pedestrian request served immediately (E-W already GREEN).');
+          return;
+        }
+
         trafficSystem.isPedestrianQueued = true;
-            pedButton.disabled = true;
-            pedButton.textContent = '⏳ Queued...';
+        const waitSec = getSecondsUntilPedWalk();
+        pedButton.textContent = 'Queued';
         setPedestrianState("wait");
-            
-           
-            stopSystem(); 
-            addLog('Pedestrian requested: System will pause after current cycle.');
+        setPedTimer("yellow", "WAIT", "Wait", waitSec, "WAITING FOR E-W GREEN");
+        addLog(`Pedestrian request queued: crossing opens in about ${waitSec}s.`);
         }
     });
 
-    const monitor = setInterval(async () => {
-      if (trafficSystem.isPedestrianQueued && trafficSystem.isRunning === false) {
-        trafficSystem.isPedestrianQueued = false;
-        trafficSystem.isPedestrianCrossing = true;
-            pedButton.textContent = '🚶 Crossing...';
-        setPedestrianState("walk");
-
-            setIntersectionState("RED", "RED");
-            addLog('PEDESTRIAN PHASE: All lights RED for 5 seconds.');
-
-            await new Promise(resolve => setTimeout(resolve, 5000));
-
-            addLog('Pedestrian phase complete. Resuming traffic...');
-        trafficSystem.isPedestrianCrossing = false;
-        setPedestrianState("stop");
-            
-            pedButton.disabled = false;
-            pedButton.textContent = '🚶 Pedestrian Crossing';
-            startSystem();
-        }
-    }, 500); 
+    setInterval(() => {
+      if (trafficSystem.isPedestrianQueued) {
+        pedButton.textContent = 'Queued';
+      } else {
+        pedButton.textContent = 'Pedestrian Crossing';
+      }
+    }, 500);
 })();

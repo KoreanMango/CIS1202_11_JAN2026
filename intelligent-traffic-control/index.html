@@ -24,13 +24,12 @@
           <div class="road road-vertical"></div>
           <div class="road road-horizontal"></div>
 
-          <div class="pedestrian-widget" aria-live="polite" aria-label="Pedestrian Signal">
-            <p class="pedestrian-title">Pedestrian Signal</p>
-            <div class="pedestrian-indicator stop" id="pedIndicator">STOP</div>
-            <p class="pedestrian-hint" id="pedHintText">Please wait. Crossing is closed.</p>
-          </div>
-
           <div class="junction-card north-south-card">
+            <article class="timer-card" id="nsTimerCard" data-state="red">
+              <p class="timer-head"><span class="timer-badge" id="nsTimerBadge">RED</span> <span id="nsTimerAction">Stop</span></p>
+              <p class="timer-value" id="nsTimerValue">--</p>
+              <p class="timer-sub" id="nsTimerSub">UNTIL GREEN</p>
+            </article>
             <h3>North-South</h3>
             <div class="light-stack" id="northSouthLights">
               <div class="light red" id="nsRed"></div>
@@ -38,9 +37,15 @@
               <div class="light green" id="nsGreen"></div>
             </div>
             <p class="phase-text" id="nsPhaseText">Current: RED</p>
+            <p class="countdown-text" id="nsCountdownText">Next change in: --</p>
           </div>
 
           <div class="junction-card east-west-card">
+            <article class="timer-card" id="ewTimerCard" data-state="green">
+              <p class="timer-head"><span class="timer-badge" id="ewTimerBadge">GREEN</span> <span id="ewTimerAction">Go</span></p>
+              <p class="timer-value" id="ewTimerValue">--</p>
+              <p class="timer-sub" id="ewTimerSub">GREEN TIME LEFT</p>
+            </article>
             <h3>East-West</h3>
             <div class="light-stack" id="eastWestLights">
               <div class="light red" id="ewRed"></div>
@@ -48,6 +53,21 @@
               <div class="light green" id="ewGreen"></div>
             </div>
             <p class="phase-text" id="ewPhaseText">Current: RED</p>
+            <p class="countdown-text" id="ewCountdownText">Next change in: --</p>
+          </div>
+
+          <div class="pedestrian-stack">
+            <article class="timer-card pedestrian-timer-card" id="pedTimerCard" data-state="red">
+              <p class="timer-head"><span class="timer-badge" id="pedTimerBadge">DON'T WALK</span> <span id="pedTimerAction">Stop</span></p>
+              <p class="timer-value" id="pedTimerValue">--</p>
+              <p class="timer-sub" id="pedTimerSub">PRESS BUTTON TO REQUEST</p>
+            </article>
+
+            <div class="pedestrian-widget" aria-live="polite" aria-label="Pedestrian Signal">
+              <p class="pedestrian-title">Pedestrian Signal</p>
+              <div class="pedestrian-indicator stop" id="pedIndicator">STOP</div>
+              <p class="pedestrian-hint" id="pedHintText">Please wait. Crossing is closed.</p>
+            </div>
           </div>
         </div>
       </section>
