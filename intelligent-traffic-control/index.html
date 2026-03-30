@@ -24,6 +24,12 @@
           <div class="road road-vertical"></div>
           <div class="road road-horizontal"></div>
 
+          <div class="pedestrian-widget" aria-live="polite" aria-label="Pedestrian Signal">
+            <p class="pedestrian-title">Pedestrian Signal</p>
+            <div class="pedestrian-indicator stop" id="pedIndicator">STOP</div>
+            <p class="pedestrian-hint" id="pedHintText">Please wait. Crossing is closed.</p>
+          </div>
+
           <div class="junction-card north-south-card">
             <h3>North-South</h3>
             <div class="light-stack" id="northSouthLights">
@@ -48,6 +54,28 @@
 
       <aside class="status-log glass-panel" aria-label="Status Log">
         <h2>Status Log</h2>
+        <section class="control-panel" aria-label="Simulation Controls">
+          <div class="mode-row">
+            <span class="mode-label">Manual</span>
+            <label class="mode-switch" for="modeToggle">
+              <input type="checkbox" id="modeToggle" aria-label="Timed mode" />
+              <span class="slider" aria-hidden="true"></span>
+            </label>
+            <span class="mode-label timed" id="modeText">Timed</span>
+          </div>
+
+          <div class="timed-input-grid" id="timedInputs">
+            <label>
+              N-S GO TIME (sec)
+              <input type="number" id="nsDurationInput" min="3" max="120" step="1" value="10" />
+            </label>
+            <label>
+              E-W GO TIME (sec)
+              <input type="number" id="ewDurationInput" min="3" max="120" step="1" value="7" />
+            </label>
+          </div>
+        </section>
+
         <div class="controls">
           <button id="startBtn">Start</button>
           <button id="stopBtn">Stop</button>
